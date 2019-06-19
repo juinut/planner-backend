@@ -7,4 +7,5 @@ class DevelopmentConfig(Config):
     DEBUG = True
 
     # SQLAlchemy config
-    SQLALCHEMY_DATABASE_URI = "postgresql://root:@localhost/planner-backend"
+    # SQLALCHEMY_DATABASE_URI = "postgresql://root:@localhost/planner-backend"
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{Config.PROJECT_PATH}'db/dev.db"
