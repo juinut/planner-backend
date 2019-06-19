@@ -10,16 +10,14 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True)
     firstname = db.Column(db.String(255),nullable=False)
     lastname =  db.Column(db.String(255), nullable=False)
-    # avatar = db.Column(db.String(200), default='default.png')
     password = db.Column(db.String(255))
-    # active = db.Column(db.Boolean)
-    # confirm_at = db.Column(db.DateTime)
     is_admin = db.Column(db.Boolean, default=False)
-    dob = db.Column(db.DateTime, nullable=False)
-    # created_at = db.Column(db.DateTime, default=datetime.now)
+    dob = db.Column(db.Date, nullable=False)
+    
 
     # relationship
-    roles = db.relationship("Role", secondary="users_roles", backref='users')
+    planners = db.relationship("Planner", backref='owner', lazy=True)
+    members = db.relationship("Member", backref="owner", lazy=True)
 
     def __repr__(self):
         return '<User %s>' % self.name

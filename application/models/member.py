@@ -9,10 +9,10 @@ class Member(db.Model):
     firstname = db.Column(db.String(255), nullable=False)
     lastname = db.Column(db.String(255), nullable=False)
     DoB = db.Column(db.datetime, nullable=False)
-    user_ID = db.Column(db.Integer, ForeignKey('user.id'))
-    User = db.relationship("User")
+    user_ID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    
     # relationship
-    roles = db.relationship("Role", secondary="users_roles", backref='users')
+    plannerActivity = db.relationship('Jointask', secondary='jointask', backref=db.backref('plannerActivitys', lazy='dynamic'))
 
     def __repr__(self):
         return '<Member %s>' % self.firstname
