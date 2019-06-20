@@ -18,6 +18,11 @@ class Service(db.Model):
     location_ID_Stop = db.Column(db.Integer, db.ForeignKey('servicetype.id'), nullable=True)
     location_ID_In = db.Column(db.Integer, db.ForeignKey('servicetype.id'), nullable=True)
     # relationship
+    activity = db.relationship("Activity", backref='services', lazy='dynamic')
+    serviceType = db.relationship("servicetype", backref='services' ,lazy='dynamic')
+    location_Start = db.relationship("Location", backref='services_start', lazy='dynamic')
+    location_In = db.relationship("Location", backref='services_in', lazy='dynamic')
+    location_Stop = db.relationship("Location", backref='services_stop', lazy='dynamic')
 
     def __repr__(self):
         return '<Activity %s>' % self.firstname

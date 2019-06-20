@@ -11,10 +11,10 @@ class Jointask(db.Model):
     activity_ID =  db.Column(db.Integer, db.ForeignKey('activity.id') ,primary_key = True)
 
     # relationship
-    db.UniqueConstraint('user_id', 'team_id', 'role_id')
-    db.relationship('Member', uselist=False, backref='memberships', lazy='dynamic')
-    db.relationship('Team', uselist=False, backref='memberships', lazy='dynamic')
-    db.relationship('Role', uselist=False, backref='memberships', lazy='dynamic')
+    db.UniqueConstraint('member_ID', 'planner_ID', 'activity_ID')
+    db.relationship('Member', uselist=False, backref='tasks', lazy='dynamic')
+    db.relationship('Planner', uselist=False, backref='tasks', lazy='dynamic')
+    db.relationship('Activity', uselist=False, backref='tasks', lazy='dynamic')
 
     def __repr__(self):
         return "<Jointask(%s)>"
