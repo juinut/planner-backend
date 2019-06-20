@@ -12,8 +12,9 @@ class Activity(db.Model):
     #ForeignKey
     planner_ID = db.Column(db.Integer, db.ForeignKey('planner.id'))
     # relationship
-    services = db.relationship("Service", backref='activity', lazy='dynamic')
-    jointrip = db.relationship('Jointask', secondary='jointask', backref=db.backref('activitys', lazy='dynamic'))
+    planner = db.relationship("Planner",backref='activties',lazy='dynamic')
+    
+    # jointrip = db.relationship('Jointask', secondary='jointask', backref=db.backref('activitys', lazy='dynamic'))
 
     def __repr__(self):
         return '<Activity %s>' % self.firstname

@@ -10,7 +10,7 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True)
     firstname = db.Column(db.String(255),nullable=False)
     lastname =  db.Column(db.String(255), nullable=False)
-    password = db.Column(db.String(255))
+    password = db.Column(db.String(255), nullable=Falses)
     is_admin = db.Column(db.Boolean, default=False)
     dob = db.Column(db.Date, nullable=False)
 
@@ -20,8 +20,8 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now)
 
     # relationship
-    planners = db.relationship("Planner", backref='users', lazy='dynamic')
-    members = db.relationship("Member", backref="users", lazy='dynamic')
+  
+    
     # relationship
     roles = db.relationship("Role", secondary="users_roles", backref='users')
 
