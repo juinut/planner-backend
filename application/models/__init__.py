@@ -8,3 +8,4 @@ from .planner import *
 from .role import *
 from .service import *
 from .serviceType import *
+from .memberTakeService import *
