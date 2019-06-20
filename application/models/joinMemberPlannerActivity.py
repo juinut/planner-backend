@@ -9,7 +9,7 @@ class Jointask(db.Model):
     member_ID = db.Column(db.Integer, db.ForeignKey('planner.id'), primary_key = True)
     planner_ID = db.Column(db.Integer, db.ForeignKey('member.id') ,primary_key = True)
     activity_ID =  db.Column(db.Integer, db.ForeignKey('activity.id') ,primary_key = True)
-    
+
     # relationship
     db.UniqueConstraint('user_id', 'team_id', 'role_id')
     db.relationship('Member', uselist=False, backref='memberships', lazy='dynamic')
@@ -18,4 +18,3 @@ class Jointask(db.Model):
 
     def __repr__(self):
         return "<Jointask(%s)>"
-
