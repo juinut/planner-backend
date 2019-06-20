@@ -16,8 +16,8 @@ class User(db.Model):
     
 
     # relationship
-    planners = db.relationship("Planner", backref='owner', lazy=True)
-    members = db.relationship("Member", backref="owner", lazy=True)
+    planners = db.relationship("Planner", backref='users', lazy='dynamic')
+    members = db.relationship("Member", backref="users", lazy='dynamic')
 
     def __repr__(self):
         return '<User %s>' % self.name

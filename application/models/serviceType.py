@@ -8,7 +8,7 @@ class Servicetype(db.Model):
 
     #ForeignKey
     # relationship
-    services = db.relationship("Service", backref='servicetype', lazy=True)
+    services = db.relationship("Service", backref='servicetype', lazy='dynamic')
 
     def __repr__(self):
         return '<Service %s>' % self.description

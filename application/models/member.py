@@ -12,7 +12,7 @@ class Member(db.Model):
     user_ID = db.Column(db.Integer, db.ForeignKey('user.id'))
     
     # relationship
-    plannerActivity = db.relationship('Jointask', secondary='jointask', backref=db.backref('plannerActivitys', lazy='dynamic'))
+    jointrip = db.relationship('Jointask', secondary='jointask', backref=db.backref('members', lazy='dynamic'))
 
     def __repr__(self):
         return '<Member %s>' % self.firstname

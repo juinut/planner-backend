@@ -9,8 +9,8 @@ class Location(db.Model):
     longtitude = db.Column(db.Float(Precision=24), nullable=False)
     #ForeignKey
     # relationship
-    start = db.relationship("Service", backref='start_loc', lazy=True)
-    stop = db.relationship("Service", backref='stop_loc', lazy=True)
-    end = db.relationship("Service", backref='in_loc', lazy=True)
+    start = db.relationship("Service", backref='start_loc', lazy='dynamic')
+    stop = db.relationship("Service", backref='stop_loc', lazy='dynamic')
+    end = db.relationship("Service", backref='in_loc', lazy='dynamic')
     def __repr__(self):
         return '<Location %s>' % self.name

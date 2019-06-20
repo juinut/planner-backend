@@ -13,6 +13,7 @@ class Planner(db.Model):
     # relationship
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     activities = db.relationship("Activity",backref="planner",lazy=True)
+    jointrip = db.relationship('Jointask', secondary='jointask', backref=db.backref('planners', lazy='dynamic'))
     
     def __repr__(self):
         return '<User %s>' % self.name
