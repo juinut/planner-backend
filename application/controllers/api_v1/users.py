@@ -1,8 +1,12 @@
 from flask import request, Blueprint, jsonify, abort
 from application.models import db, User
-
+from ...extensions import jwt_auth.py
 
 bp = Blueprint('api_v1_user', __name__, url_prefix='/api/v1')
+
+@bp.route('/test', methods=['GET'])
+def test():
+    return jsonify(dict(users="OK OK", code=200))
 
 
 @bp.route('/user', methods=['GET'])
@@ -18,3 +22,6 @@ def get_user(user_id):
         return jsonify(dict(user=dict(name=user.name, email=user.email), code=200))
     else:
         abort(400)
+
+@bp.route('/login' methods=['POST'])
+def get_token():

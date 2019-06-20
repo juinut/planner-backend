@@ -14,6 +14,10 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     dob = db.Column(db.Date, nullable=False)
     
+    active = db.Column(db.Boolean)
+    confirm_at = db.Column(db.DateTime)
+    is_admin = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     # relationship
     planners = db.relationship("Planner", backref='users', lazy='dynamic')
