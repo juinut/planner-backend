@@ -12,7 +12,7 @@ class Jointask(db.Model):
     
     # relationship
     db.UniqueConstraint('user_id', 'team_id', 'role_id')
-    db.relationship('User', uselist=False, backref='memberships', lazy='dynamic')
+    db.relationship('Member', uselist=False, backref='memberships', lazy='dynamic')
     db.relationship('Team', uselist=False, backref='memberships', lazy='dynamic')
     db.relationship('Role', uselist=False, backref='memberships', lazy='dynamic')
 
