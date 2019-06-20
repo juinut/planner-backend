@@ -12,8 +12,8 @@ class Activity(db.Model):
     #ForeignKey
     planner_ID = db.Column(db.Integer, db.ForeignKey('planner.id'))
     # relationship
-    planner = db.relationship("Planner",backref='activties',lazy='dynamic')
-    
+    planner = db.relationship("Planner",backref='activties',lazy=True)
+
     # jointrip = db.relationship('Jointask', secondary='jointask', backref=db.backref('activitys', lazy='dynamic'))
 
     def __repr__(self):

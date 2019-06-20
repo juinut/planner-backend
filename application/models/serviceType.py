@@ -3,7 +3,7 @@ from ._base import db
 
 
 class Servicetype(db.Model):
-    __tablename__ = "sevicetype"
+    __tablename__ = "servicetype"
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(255), nullable=False)
 

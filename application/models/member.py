@@ -11,9 +11,9 @@ class Member(db.Model):
     DoB = db.Column(db.DateTime, nullable=False)
     # foreignKey
     user_ID = db.Column(db.Integer, db.ForeignKey('user.id'))
-    
+
     # relationship
-    user = db.relationship("User", backref="members", lazy='dynamic')
+    user = db.relationship("User", backref="members", lazy=True)
     # jointrip = db.relationship('Jointask', secondary='jointask', backref=db.backref('members', lazy='dynamic'))
 
     def __repr__(self):
