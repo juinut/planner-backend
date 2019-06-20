@@ -13,7 +13,7 @@ class User(db.Model):
     password = db.Column(db.String(255))
     is_admin = db.Column(db.Boolean, default=False)
     dob = db.Column(db.Date, nullable=False)
-    
+
     active = db.Column(db.Boolean)
     confirm_at = db.Column(db.DateTime)
     is_admin = db.Column(db.Boolean, default=False)
@@ -22,6 +22,8 @@ class User(db.Model):
     # relationship
     planners = db.relationship("Planner", backref='users', lazy='dynamic')
     members = db.relationship("Member", backref="users", lazy='dynamic')
+    # relationship
+    roles = db.relationship("Role", secondary="users_roles", backref='users')
 
     def __repr__(self):
         return '<User %s>' % self.name
