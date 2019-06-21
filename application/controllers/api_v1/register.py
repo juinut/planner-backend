@@ -1,5 +1,6 @@
 from flask import request, Blueprint, jsonify, abort
 from application.models import db, User
+import datetime as dt
 
 bp = Blueprint('api_v1_register', __name__, url_prefix='/register')
 
@@ -12,18 +13,39 @@ def create_user():
         firstname = request.json.get('firstname')
         lastname = request.json.get('lastname')
         password = request.json.get('password')
+        confirmpassword = request.json.get('confirmpassword')
         email = request.json.get('email')
         dob = request.json.get('dob')
 
-        if not username or not password or not firstname or not lastname or not email or not email:
-            raise Exception('invalid input data')
+        if not username:
+            raise Exception('username is empty')
+        if not firstname:
+            raise Exception('firstname is empty')
+        if not lastname:
+            raise Exception('lastname is empty')
+        if not password:
+            raise Exception('password is empty')
+        if not confirmpassword:
+            raise Exception('confirmpassword is empty')
+        if not email:
+            raise Exception('email is empty')
+        if not dob:
+            raise Exception('dob is empty')
+        if password!=confirmpassword:
+            raise Exception('passwords are not matched')
 
-        db.session.add(User(id=1, username=username, firstname=firstname, lastname=lastname, password=password,email=email, dob=dob, is_admin=False))
+        # tocreateuserobject = User(username=username, firstname=firstname, lastname=lastname, password=password,email=email, dob=dt.date(1998,1,1), is_admin=False)
+
+        tocreateuserobject = User(username=username, firstname=firstname,
+        lastname=lastname, password=password,email=email,
+        dob=dt.datetime.strptime(dob, '%d-%m-%Y').date(), is_admin=False)
+
+        db.session.add(tocreateuserobject)
         db.session.commit()
         return jsonify(dict(success=True)), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
+        return jsonify(dict(success=False, message=str(e)+dob)), 400
 
 @bp.route('/', methods=['GET'])
 def get():
