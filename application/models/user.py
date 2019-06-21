@@ -26,4 +26,4 @@ class User(db.Model):
     roles = db.relationship("Role", secondary="users_roles", backref='users')
 
     def __repr__(self):
-        return '<User %s>' % self.usename
+        return '<User %s>' % self.username

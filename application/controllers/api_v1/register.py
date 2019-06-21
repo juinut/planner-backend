@@ -48,9 +48,10 @@ def create_user():
             raise Exception('email does not valid')
         if not re.match("^[0-9]*$", dob):
             raise Exception('dob cant contain alphabets or special characters')
-
-
-        # tocreateuserobject = User(username=username, firstname=firstname, lastname=lastname, password=password,email=email, dob=dt.date(1998,1,1), is_admin=False)
+        if User.query.filter_by(username=username).all():
+            raise Exception('username already existed')
+        if User.query.filter_by(email=email).all():
+            raise Exception('email already existed')
 
         tocreateuserobject = User(username=username, firstname=firstname,
         lastname=lastname, password=password,email=email,
@@ -59,6 +60,7 @@ def create_user():
         db.session.add(tocreateuserobject)
         db.session.commit()
         return jsonify(dict(success=True)), 201
+
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e))), 400
