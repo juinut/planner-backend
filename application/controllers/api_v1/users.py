@@ -4,6 +4,15 @@ from application.models import db, User
 
 bp = Blueprint('api_v1_user', __name__, url_prefix='/api/v1')
 
+@classmethod
+def find_by_username(username):
+    user = User.query.get(username).first()
+    if not user:
+        raise Exception('User not found')
+    else:
+        return user
+
+
 @bp.route('/test', methods=['GET'])
 def test():
     return jsonify(dict(users="OK OK", code=200))
@@ -23,7 +32,7 @@ def get_user(user_id):
     else:
         abort(400)
 
-@bp.route('/login' methods=['POST'])
+@bp.route('/login', methods=['POST'])
 def get_token(user):
     try:
         token = False
@@ -31,13 +40,14 @@ def get_token(user):
         password = request.json.get('password')
         if not user_name:
             raise Exception('username is empty')
-        else if not password:
+        elif not password:
             raise Exception('password is empty')
-        user = User.query.get(user_name)
-        if user:
-            if user.password == password:
-                token = True
-            return jsonif(dict(success=token), code=200)
+        
+        user = find_by_username(user_name)
+        
+        if user.password == password:
+            token = True
+        return jsonify(dict(success=token), code=200)
     except Exception as e:
         return jsonify(dict(message=str(e)), code=404)
                 
