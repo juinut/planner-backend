@@ -7,9 +7,9 @@ bp = Blueprint('api_v1_user', __name__, url_prefix='/api/v1')
 
 
 
-@classmethod
+
 def find_by_username(username):
-    user = User.query.get(username).first()
+    user = User.query.get(username)
     if not user:
         raise Exception('User {} doesn\'s exit'.format(username))
     else:
@@ -36,7 +36,7 @@ def get_user(user_id):
         abort(400)
 
 @bp.route('/login', methods=['POST'])
-def get_token(user):
+def get_token():
     try:
         user_name = request.json.get('username')
         password = request.json.get('password')
@@ -53,5 +53,5 @@ def get_token(user):
             raise Exception('Wrong credentials')
 
     except Exception as e:
-        return jsonify(dict(message=str(e)), code=404)
+        return jsonify(dict(message=str(e), code=404))
                 
