@@ -15,3 +15,4 @@ node_modules/
 #application/static/css/**/*.css
 #!application/static/css/libs/*.css
 #application/static/output/
+db/dev.db
