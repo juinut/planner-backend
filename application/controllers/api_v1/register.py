@@ -1,6 +1,7 @@
 from flask import request, Blueprint, jsonify, abort
 from application.models import db, User
 import datetime as dt
+import re
 
 bp = Blueprint('api_v1_register', __name__, url_prefix='/register')
 
@@ -33,19 +34,34 @@ def create_user():
             raise Exception('dob is empty')
         if password!=confirmpassword:
             raise Exception('passwords are not matched')
+        if not re.match("^[a-zA-Z0-9]*$", username):
+            raise Exception('username cant contain special characters')
+        if not re.match("^[a-zA-Z]*$", firstname):
+            raise Exception('firstname cant contain special characters or numbers')
+        if not re.match("^[a-zA-Z]*$", lastname):
+            raise Exception('lastname cant contain special characters or numbers')
+        if not re.match("^[a-zA-Z0-9]*$", password):
+            raise Exception('password cant contain special characters')
+        if not re.match("^[a-zA-Z0-9]*$", confirmpassword):
+            raise Exception('confirmpassword cant contain special characters')
+        if not re.match("^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
+            raise Exception('email does not valid')
+        if not re.match("^[0-9]*$", dob):
+            raise Exception('dob cant contain alphabets or special characters')
+
 
         # tocreateuserobject = User(username=username, firstname=firstname, lastname=lastname, password=password,email=email, dob=dt.date(1998,1,1), is_admin=False)
 
         tocreateuserobject = User(username=username, firstname=firstname,
         lastname=lastname, password=password,email=email,
-        dob=dt.datetime.strptime(dob, '%d-%m-%Y').date(), is_admin=False)
+        dob=dt.datetime.strptime(dob, '%d%m%Y').date(), is_admin=False)
 
         db.session.add(tocreateuserobject)
         db.session.commit()
         return jsonify(dict(success=True)), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e)+dob)), 400
+        return jsonify(dict(success=False, message=str(e))), 400
 
 @bp.route('/', methods=['GET'])
 def get():
