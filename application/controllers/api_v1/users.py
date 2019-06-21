@@ -9,7 +9,9 @@ bp = Blueprint('api_v1_user', __name__, url_prefix='/api/v1')
 
 
 def find_by_username(username):
-    user = User.query.get(username)
+    user = User.query.filter_by(username=username).first()
+
+    print(user)
     if not user:
         raise Exception('User {} doesn\'s exit'.format(username))
     else:
@@ -46,11 +48,11 @@ def get_token():
             raise Exception('password is empty')
         
         user = find_by_username(user_name)
-        
         if user.password == password:
-            return jsonify(dict(message='Logged in as {}'.format(user['username'])), code=200)
+            return jsonify(dict(message='Logged in as {}'.format(user.username), code=200))
         else:
             raise Exception('Wrong credentials')
+
 
     except Exception as e:
         return jsonify(dict(message=str(e), code=404))
