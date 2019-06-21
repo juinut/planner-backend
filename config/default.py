@@ -50,6 +50,6 @@ class Config(object):
 
     # JWT
     JWT_EXPIRED_IN_MIN = 15
-    JWT_REFRESH_EXPIRED_IN_DAY = 3
+    JWT_REFRESH_EXPIRED_IN_DAY = 15
     JWT_ALGOR = 'HS256'
     JWT_SECRET_KEY = "eieieieieieieieieieieieieieieiei"
