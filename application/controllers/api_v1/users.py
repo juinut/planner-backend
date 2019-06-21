@@ -1,12 +1,8 @@
 from flask import request, Blueprint, jsonify, abort
 from application.models import db, User
-
-# from ...extensions import jwt_auth
+from application.extensions import jwt_auth
 
 bp = Blueprint('api_v1_user', __name__, url_prefix='/api/v1')
-
-
-
 
 def find_by_username(username):
     user = User.query.filter_by(username=username).first()
@@ -36,7 +32,6 @@ def get_user(user_id):
         return jsonify(dict(user=dict(name=user.name, email=user.email), code=200))
     else:
         abort(400)
-
 @bp.route('/login', methods=['POST'])
 def get_token():
     try:
@@ -46,14 +41,14 @@ def get_token():
             raise Exception('username is empty')
         elif not password:
             raise Exception('password is empty')
-        
+
         user = find_by_username(user_name)
         if user.password == password:
-            return jsonify(dict(message='Logged in as {}'.format(user.username), code=200))
+            jwttoken = jwt_auth.generate_token(user.id)
+            return jsonify(dict(message='Logged in as {}'.format(user.username), message2=jwttoken, code=200))
         else:
             raise Exception('Wrong credentials')
 
 
     except Exception as e:
         return jsonify(dict(message=str(e), code=404))
-                

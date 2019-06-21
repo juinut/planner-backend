@@ -47,3 +47,7 @@ class Config(object):
 
     # Host string, used by fabric
     HOST_STRING = "root@12.34.56.78"
+
+    # JWT
+    JWT_EXPIRED_IN_MIN = 15
+    JWT_REFRESH_EXPIRED_IN_DAY = 3
