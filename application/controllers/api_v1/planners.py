@@ -24,7 +24,10 @@ def create_plan():
         if not description:
             raise Exception('description cannot be empty')
 
-        planner_object = Planner(name=planner_name, first_date=dt.datetime.strptime(first_date, '%d%m%Y').date(), last_date=dt.datetime.strptime(last_date, '%d%m%Y').date(), description=description, user_id=user.id)
+        planner_object = Planner(name=planner_name,
+        first_date=dt.datetime.strptime(first_date, '%d%m%Y').date(),
+        last_date=dt.datetime.strptime(last_date, '%d%m%Y').date(),
+        description=description, user_id=user.id)
 
         db.session.add(planner_object)
         db.session.commit()
