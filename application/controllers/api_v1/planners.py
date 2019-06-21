@@ -1,5 +1,5 @@
 from flask import request, Blueprint, jsonify, abort
-from application.models import db, Planner
+from application.models import db, Planner, User
 from application.extensions import jwt_auth
 import datetime as dt
 
@@ -12,11 +12,9 @@ def create_plan():
         first_date = request.json.get('first_date')
         last_date = request.json.get('last_date')
         description = request.json.get('description')
-        token = request.json.get('token')
-        user_id = jwt_auth.get_user_from_token(token)
-        print(token)
-        print(user_id.id)
-        
+        jwttoken = request.json.get('jwttoken')
+        user = jwt_auth.get_user_from_token(jwttoken)
+
         if not planner_name:
             raise Exception('planner_name cannot be empty')
         if not first_date:
@@ -26,12 +24,24 @@ def create_plan():
         if not description:
             raise Exception('description cannot be empty')
 
-        planner_object = Planner(name=planner_name, first_date=dt.datetime.strptime(first_date, '%d%m%Y').date(), last_date=dt.datetime.strptime(last_date, '%d%m%Y').date(), description=description, user_id=user_id.id)
+        planner_object = Planner(name=planner_name, first_date=dt.datetime.strptime(first_date, '%d%m%Y').date(), last_date=dt.datetime.strptime(last_date, '%d%m%Y').date(), description=description, user_id=user.id)
 
         db.session.add(planner_object)
         db.session.commit()
         return jsonify(dict(success=True)), 201
-        
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(dict(success=False, message=str(e))), 400
+
+@bp.route('/view_all_plan', methods=['GET'])
+def view_all_plan():
+    try:
+        jwttoken = request.json.get('jwttoken')
+        user = jwt_auth.get_user_from_token(jwttoken)
+        plannerlist = Planner.query.filter_by(user_id=user.id).all()
+        print(plannerlist)
+        return jsonify(dict(success=True)), 201
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e))), 400
