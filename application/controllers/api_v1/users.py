@@ -1,14 +1,17 @@
 from flask import request, Blueprint, jsonify, abort
 from application.models import db, User
+
 # from ...extensions import jwt_auth
 
 bp = Blueprint('api_v1_user', __name__, url_prefix='/api/v1')
+
+
 
 @classmethod
 def find_by_username(username):
     user = User.query.get(username).first()
     if not user:
-        raise Exception('User not found')
+        raise Exception('User {} doesn\'s exit'.format(username))
     else:
         return user
 
@@ -35,7 +38,6 @@ def get_user(user_id):
 @bp.route('/login', methods=['POST'])
 def get_token(user):
     try:
-        token = False
         user_name = request.json.get('username')
         password = request.json.get('password')
         if not user_name:
@@ -46,8 +48,10 @@ def get_token(user):
         user = find_by_username(user_name)
         
         if user.password == password:
-            token = True
-        return jsonify(dict(success=token), code=200)
+            return jsonify(dict(message='Logged in as {}'.format(user['username'])), code=200)
+        else:
+            raise Exception('Wrong credentials')
+
     except Exception as e:
         return jsonify(dict(message=str(e)), code=404)
                 
