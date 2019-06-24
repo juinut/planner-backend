@@ -56,12 +56,8 @@ def create_user():
 
         db.session.add(tocreateuserobject)
         db.session.commit()
-        return jsonify(dict(success=True)), 201
+        return jsonify(dict(success=True, code=201))
 
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e),code=400))
-
-@bp.route('/', methods=['GET'])
-def get():
-    return jsonify(dict(message="Hi")), 201

@@ -29,11 +29,11 @@ def create_activity():
 
         db.session.add(activity_object)
         db.session.commit()
-        return jsonify(dict(success=True)), 201
+        return jsonify(dict(success=True, code=201))
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
+        return jsonify(dict(success=False, message=str(e), code=400))
 
 @bp.route('/view_all_planner', methods=['GET'])
 def view_all_planner():

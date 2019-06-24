@@ -31,11 +31,11 @@ def create_planner():
 
         db.session.add(planner_object)
         db.session.commit()
-        return jsonify(dict(success=True)), 201
+        return jsonify(dict(success=True), code=201)
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
+        return jsonify(dict(success=False, message=str(e)), code=400)
 
 @bp.route('/view_all_planner', methods=['GET'])
 def view_all_planner():
@@ -49,10 +49,10 @@ def view_all_planner():
         for x in plannerlist:
             planneridlist.append(x.id)
             plannernamelist.append(x.name)
-        return jsonify(dict(id=planneridlist, name=plannernamelist)), 201
+        return jsonify(dict(id=planneridlist, name=plannernamelist, code=200))
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
+        return jsonify(dict(success=False, message=str(e), code=400))
 
 @bp.route('/view_planner/<planner_id>', methods=['GET'])
 def view_planner(planner_id):
@@ -64,12 +64,12 @@ def view_planner(planner_id):
             returnplanner = [desiredplanner.id, desiredplanner.name,
             desiredplanner.first_date, desiredplanner.last_date,
              desiredplanner.description]
-            return jsonify(dict(planner=returnplanner)), 201
+            return jsonify(dict(planner=returnplanner, code=200))
         else:
-            return jsonify(dict(message='no such planner in your id')), 400
+            raise Exception('no such planner in your id')
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
+        return jsonify(dict(success=False, message=str(e), code=400))
 
 @bp.route('/edit_planner/<planner_id>', methods=['POST'])
 def edit_planner(planner_id):
@@ -96,12 +96,12 @@ def edit_planner(planner_id):
             Planner.query.filter(Planner.id == planner_id).\
             update({Planner.name: planner_name}, synchronize_session=False)
             db.session.commit()
-            return jsonify(dict(success=True)), 201
+            return jsonify(dict(success=True, code=201))
         else:
-            return jsonify(dict(message='no such planner in your id')), 400
+            raise Exception('no such planner in your id')
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
+        return jsonify(dict(success=False, message=str(e), code=400))
 
 @bp.route('/delete_planner/<planner_id>', methods=['GET'])
 def delete_planner(planner_id):
@@ -128,9 +128,9 @@ def delete_planner(planner_id):
             Planner.query.filter(Planner.id == planner_id).\
             update({Planner.name: planner_name}, synchronize_session=False)
             db.session.commit()
-            return jsonify(dict(success=True)), 201
+            return jsonify(dict(success=True, code=201))
         else:
-            return jsonify(dict(message='no such planner in your id')), 400
+            raise Exception('no such planner in your id')
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
+        eturn jsonify(dict(success=False, message=str(e), code=400))
