@@ -40,8 +40,6 @@ def create_user():
             raise Exception('lastname cant contain special characters or numbers')
         if not re.match("^[a-zA-Z0-9]*$", password):
             raise Exception('password cant contain special characters')
-        if not re.match("^[a-zA-Z0-9]*$", confirmpassword):
-            raise Exception('confirmpassword cant contain special characters')
         if not re.match("^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
             raise Exception('email does not valid')
         if not re.match("^[0-9]*$", dob):
