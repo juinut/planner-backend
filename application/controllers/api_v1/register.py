@@ -60,7 +60,7 @@ def create_user():
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
+        return jsonify(dict(success=False, message=str(e),code=400))
 
 @bp.route('/', methods=['GET'])
 def get():
