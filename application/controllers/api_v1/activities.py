@@ -35,25 +35,8 @@ def create_activity():
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/view_all_planner', methods=['GET'])
-def view_all_planner():
-    try:
-        jwttoken = request.json.get('jwttoken')
-        user = jwt_auth.get_user_from_token(jwttoken)
-        plannerlist = Planner.query.filter_by(user_id=user.id).all()
-        print(plannerlist)
-        planneridlist = []
-        plannernamelist = []
-        for x in plannerlist:
-            planneridlist.append(x.id)
-            plannernamelist.append(x.name)
-        return jsonify(dict(id=planneridlist, name=plannernamelist)), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
-
-@bp.route('/view_planner/<planner_id>', methods=['GET'])
-def view_planner(planner_id):
+@bp.route('/view_activity/<activity_id>', methods=['GET'])
+def view_activity(activity_id):
     try:
         jwttoken = request.json.get('jwttoken')
         user = jwt_auth.get_user_from_token(jwttoken)
@@ -62,12 +45,12 @@ def view_planner(planner_id):
             returnplanner = [desiredplanner.id, desiredplanner.name,
             desiredplanner.first_date, desiredplanner.last_date,
              desiredplanner.description]
-            return jsonify(dict(planner=returnplanner)), 201
+            return jsonify(dict(planner=returnplanner, code=201)))
         else:
-            return jsonify(dict(message='no such planner in your id')), 400
+            raise Exception('no such activity')
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e))), 400
+        return jsonify(dict(success=False, message=str(e), code=400))
 
 @bp.route('/edit_planner/<planner_id>', methods=['POST'])
 def edit_planner(planner_id):
