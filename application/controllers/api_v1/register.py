@@ -55,7 +55,7 @@ def create_user():
 
         tocreateuserobject = User(username=username, firstname=firstname,
         lastname=lastname, password=password,email=email,
-        dob=dt.datetime.strptime(dob, '%d%m%Y').date(), gender=gender,
+        dob=dt.datetime.strptime(dob, '%d/%m/%Y').date(), gender=gender,
         is_admin=False)
 
         db.session.add(tocreateuserobject)
