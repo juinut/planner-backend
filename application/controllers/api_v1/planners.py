@@ -93,11 +93,6 @@ def edit_planner(planner_id):
 
         desiredplanner = Planner.query.filter_by(id=planner_id).one()
         if user.id == desiredplanner.user_id:
-            # Planner.query.filter(Planner.id==planner_id).\
-            # update({Planner.name: planner_name, Planner.first_date:
-            # dt.datetime.strptime(first_date, '%d%m%Y').date(), Planner.last_date:
-            # dt.datetime.strptime(last_date, '%d%m%Y').date(), Planner.description:
-            # description})
             Planner.query.filter(Planner.id == planner_id).\
             update({Planner.name: planner_name}, synchronize_session=False)
             db.session.commit()
