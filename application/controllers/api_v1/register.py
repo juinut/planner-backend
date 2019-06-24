@@ -14,7 +14,6 @@ def create_user():
         firstname = request.json.get('firstname')
         lastname = request.json.get('lastname')
         password = request.json.get('password')
-        confirmpassword = request.json.get('confirmpassword')
         email = request.json.get('email')
         dob = request.json.get('dob')
 
@@ -32,8 +31,6 @@ def create_user():
             raise Exception('email is empty')
         if not dob:
             raise Exception('dob is empty')
-        if password!=confirmpassword:
-            raise Exception('passwords are not matched')
         if not re.match("^[a-zA-Z0-9]*$", username):
             raise Exception('username cant contain special characters')
         if not re.match("^[a-zA-Z]*$", firstname):
