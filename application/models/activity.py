@@ -17,4 +17,4 @@ class Activity(db.Model):
     # jointrip = db.relationship('Jointask', secondary='jointask', backref=db.backref('activitys', lazy='dynamic'))
 
     def __repr__(self):
-        return '<Activity %s>' % self.firstname
+        return '<Activity %s>' % self.name

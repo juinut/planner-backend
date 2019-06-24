@@ -18,4 +18,4 @@ class Planner(db.Model):
     # jointrip = db.relationship('Jointask', secondary='jointask', backref=db.backref('planners', lazy='dynamic'))
 
     def __repr__(self):
-        return '<User %s>' % self.name
+        return '<Planner %s>' % self.name

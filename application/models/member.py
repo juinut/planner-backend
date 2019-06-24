@@ -9,6 +9,7 @@ class Member(db.Model):
     firstname = db.Column(db.String(255), nullable=False)
     lastname = db.Column(db.String(255), nullable=False)
     DoB = db.Column(db.DateTime, nullable=False)
+    Gender = db.Column(db.String(255), nullable=False)
     # foreignKey
     user_ID = db.Column(db.Integer, db.ForeignKey('user.id'))
 
