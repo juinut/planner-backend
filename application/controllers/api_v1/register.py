@@ -42,7 +42,7 @@ def create_user():
             raise Exception('password cant contain special characters')
         if not re.match("^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
             raise Exception('email does not valid')
-        if not re.match("^[0-9]\-*$", dob):
+        if not re.match("^[0-9-]*$", dob):
             raise Exception('dob cant contain alphabets or special characters')
         if User.query.filter_by(username=username).all():
             raise Exception('username already existed')
