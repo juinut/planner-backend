@@ -11,4 +11,4 @@ class Servicetype(db.Model):
     # relationship
 
     def __repr__(self):
-        return '<Service %s>' % self.description
+        return '<Servicetype %s>' % self.description

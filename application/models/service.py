@@ -27,4 +27,4 @@ class Service(db.Model):
     # location_Stop = db.relationship("Location", backref='services_stop', lazy=True)
 
     def __repr__(self):
-        return '<Activity %s>' % self.firstname
+        return '<Service %s>' % self.name

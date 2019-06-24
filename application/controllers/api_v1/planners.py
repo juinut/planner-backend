@@ -44,7 +44,31 @@ def view_all_plan():
         user = jwt_auth.get_user_from_token(jwttoken)
         plannerlist = Planner.query.filter_by(user_id=user.id).all()
         print(plannerlist)
-        return jsonify(dict(success=True)), 201
+        planneridlist = []
+        plannernamelist = []
+        for x in plannerlist:
+            planneridlist.append(x.id)
+            plannernamelist.append(x.name)
+        return jsonify(dict(id=planneridlist, name=plannernamelist)), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(dict(success=False, message=str(e))), 400
+
+@bp.route('/view_plan/<planner_id>', methods=['GET'])
+def view_plan(planner_id):
+    try:
+        jwttoken = request.json.get('jwttoken')
+        user = jwt_auth.get_user_from_token(jwttoken)
+        desiredplanner = Planner.query.filter_by(id=planner_id)
+        print(desiredplanner)
+        for x in plannerlist:
+            if planner_id == x.id:
+                returnplanner = [x.id, x.name, x.first_date, x.last_date, x.description]
+                plannerexistinid=True
+        if plannerexistinid:
+            return jsonify(dict(planner=returnplanner)), 201
+        else:
+            return jsonify(dict(message='no such planner in your id')), 400
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e))), 400
