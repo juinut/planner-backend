@@ -16,6 +16,7 @@ def create_user():
         password = request.json.get('password')
         email = request.json.get('email')
         dob = request.json.get('dob')
+        gender = request.json.get('gender')
 
         if not username:
             raise Exception('username is empty')
@@ -31,6 +32,8 @@ def create_user():
             raise Exception('email is empty')
         if not dob:
             raise Exception('dob is empty')
+        if not gender:
+            raise Exception('gender is empty')
         if not re.match("^[a-zA-Z0-9]*$", username):
             raise Exception('username cant contain special characters')
         if not re.match("^[a-zA-Z]*$", firstname):
@@ -52,7 +55,8 @@ def create_user():
 
         tocreateuserobject = User(username=username, firstname=firstname,
         lastname=lastname, password=password,email=email,
-        dob=dt.datetime.strptime(dob, '%d%m%Y').date(), is_admin=False)
+        dob=dt.datetime.strptime(dob, '%d%m%Y').date(), gender=gender,
+        is_admin=False)
 
         db.session.add(tocreateuserobject)
         db.session.commit()

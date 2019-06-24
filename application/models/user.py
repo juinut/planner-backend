@@ -13,6 +13,7 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     dob = db.Column(db.Date, nullable=False)
+    gender = db.Column(db.CHAR(1), nullable = False)
 
     active = db.Column(db.Boolean, default=True)
     confirm_at = db.Column(db.DateTime, default=datetime.now)

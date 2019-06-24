@@ -104,7 +104,7 @@ def edit_planner(planner_id):
         return jsonify(dict(success=False, message=str(e))), 400
 
 @bp.route('/delete_planner/<planner_id>', methods=['GET'])
-def edit_planner(planner_id):
+def delete_planner(planner_id):
     try:
         planner_name = request.json.get('planner_name')
         first_date = request.json.get('first_date')
