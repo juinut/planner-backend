@@ -26,8 +26,6 @@ def create_user():
             raise Exception('lastname is empty')
         if not password:
             raise Exception('password is empty')
-        if not confirmpassword:
-            raise Exception('confirmpassword is empty')
         if not email:
             raise Exception('email is empty')
         if not dob:
