@@ -36,6 +36,7 @@ def get_user(user_id):
 def get_token():
     try:
         user_name = request.json.get('username')
+        email = request.json.get('email')
         password = request.json.get('password')
         if not user_name:
             raise Exception('username is empty')
