@@ -18,6 +18,7 @@ from werkzeug.contrib.fixers import ProxyFix
 from six import iteritems
 from flask_security.core import current_user, AnonymousUser
 from config import load_config
+from flask_cors import CORS
 
 # convert python's encoding to utf8
 try:
@@ -35,6 +36,7 @@ def create_app():
 
     app = Flask(__name__)
     app.config.from_object(config)
+    CORS(app)
 
     # Proxy fix
     app.wsgi_app = ProxyFix(app.wsgi_app)
