@@ -4,6 +4,7 @@ Flask-WTF
 Flask-SQLAlchemy
 Flask-DebugToolbar
 Flask-Migrate
+flask-cors
 python-dotenv
 
 # Athentication
