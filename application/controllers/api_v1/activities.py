@@ -45,7 +45,7 @@ def view_activity(activity_id):
             returnplanner = [desiredplanner.id, desiredplanner.name,
             desiredplanner.first_date, desiredplanner.last_date,
              desiredplanner.description]
-            return jsonify(dict(planner=returnplanner, code=201)))
+            return jsonify(dict(planner=returnplanner, code=201))
         else:
             raise Exception('no such activity')
     except Exception as e:
