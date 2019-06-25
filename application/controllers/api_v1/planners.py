@@ -113,7 +113,6 @@ def delete_planner(planner_id):
         jwttoken = request.json.get('jwttoken')
         user = jwt_auth.get_user_from_token(jwttoken)
 
-
         if not planner_name:
             raise Exception('planner_name cannot be empty')
         if not first_date:
