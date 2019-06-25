@@ -133,4 +133,4 @@ def delete_planner(planner_id):
             raise Exception('no such planner in your id')
     except Exception as e:
         db.session.rollback()
-        eturn jsonify(dict(success=False, message=str(e), code=400))
+        return jsonify(dict(success=False, message=str(e), code=400))
