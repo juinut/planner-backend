@@ -55,6 +55,8 @@ def create_activity(activityid):
             Obj = Service(name=name,kidPrice=kid_price,adutePrice=adute,elderlyProce=elderly\
                 ,sumPrice=price,calType=calType,activity_ID=activity_ID,serviceType_ID=service_type\
                     ,location_ID=location_start)
+            db.session.add(Obj)
+            db.session.commit()
             serviceID = Obj.id
 
         members = request.json.get("user")
@@ -71,14 +73,14 @@ def create_activity(activityid):
                 else:
                     priceMember = elderly
                 memTake = MemberTakeService(member_ID="member", service_ID=serviceID, price=priceMember)
-                db.session.add()
+                db.session.add(memTake)
                 db.commit()
         else:
             countMem = len(members)
             priceM = price/countMem
             for member in members:
                 memTake = MemberTakeService(member_ID="member", service_ID=serviceID, price=priceM)
-                db.session.add()
+                db.session.add(memTake)
                 db.commit()
 
         return jsonify(dict(success=True,code=200))
@@ -86,11 +88,14 @@ def create_activity(activityid):
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e),code=400))
-        
 
+@bp.route('delete_service/<service_id>', methods=['DELETE'])
+def delete_activity(service_id):
+    try:
+        MemberTakeService.query.filter_by(service_ID=service_id).delete()
+        Service.query.filter_by(service_ID=service_id).delete()
+        return jsonify(dict(success=True, code=200))
 
-
-
-
-        
-
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(dict(success=False, message=str(e),code=400))
