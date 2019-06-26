@@ -50,9 +50,9 @@ def view_all_activity(planner_id):
         user = jwt_auth.get_user_from_token(jwttoken)
         desiredplanner = Planner.query.filter_by(id=planner_id).one()
         if user.id == desiredplanner.user_id:
-            if desiredplanner.id == desiredactiity.planner_ID:
-                returnactivity = [desiredactiity.id, desiredactiity.name, desiredactiity.start,
-                desiredactiity.end, desiredactiity.description]
+            if desiredplanner.id == desiredactivity.planner_ID:
+                returnactivity = [desiredactivity.id, desiredactivity.name, desiredactivity.start,
+                desiredactivity.end, desiredactivity.description]
                 return jsonify(dict(activity=returnactivity, code=201))
             else:
                 raise Exception('no such activity')

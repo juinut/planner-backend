@@ -25,31 +25,32 @@ def create_planner():
             raise Exception('description cannot be empty')
 
         planner_object = Planner(name=planner_name,
-        first_date=dt.datetime.strptime(first_date, '%d%m%Y').date(),
-        last_date=dt.datetime.strptime(last_date, '%d%m%Y').date(),
+        first_date=dt.datetime.strptime(first_date, '%Y-%m-%d').date(),
+        last_date=dt.datetime.strptime(last_date, '%Y-%m-%d').date(),
         description=description, user_id=user.id)
 
         db.session.add(planner_object)
         db.session.commit()
-        return jsonify(dict(success=True), code=201)
+        return jsonify(dict(success=True, code=201))
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e)), code=400)
+        return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/view_all_planner', methods=['GET'])
+@bp.route('/view_all_planner', methods=['POST'])
 def view_all_planner():
     try:
         jwttoken = request.json.get('jwttoken')
         user = jwt_auth.get_user_from_token(jwttoken)
         plannerlist = Planner.query.filter_by(user_id=user.id).all()
-        print(plannerlist)
-        planneridlist = []
         plannernamelist = []
+        plannerfirstdatelist = []
+        plannerlastdatelist = []
         for x in plannerlist:
-            planneridlist.append(x.id)
             plannernamelist.append(x.name)
-        return jsonify(dict(id=planneridlist, name=plannernamelist, code=200))
+            plannerfirstdatelist.append(x.first_date)
+            plannerlastdatelist.append(x.last_date)
+        return jsonify(dict(name=plannernamelist, startdate=plannerfirstdatelist, enddate=plannerlastdatelist, code=200))
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))

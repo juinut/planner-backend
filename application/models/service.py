@@ -14,7 +14,7 @@ class Service(db.Model):
     #ForeignKey
     activity_ID = db.Column(db.Integer, db.ForeignKey('activity.id'), nullable=False)
     serviceType_ID = db.Column(db.Integer, db.ForeignKey('servicetype.id'), nullable=False)
-    location_ID = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    location_ID = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)
     # location_ID_Start = db.Column(db.Integer, db.ForeignKey('servicetype.id'), nullable=True)
     # location_ID_Stop = db.Column(db.Integer, db.ForeignKey('servicetype.id'), nullable=True)
     # location_ID_In = db.Column(db.Integer, db.ForeignKey('servicetype.id'), nullable=True)
