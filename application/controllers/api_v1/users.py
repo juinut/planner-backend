@@ -22,14 +22,18 @@ def test():
 @bp.route('/user', methods=['GET'])
 def list_users():
     data = User.query.all()
-    return jsonify(dict(users=data, code=200))
+    username_list = []
+    for i in data:
+        username_list.append(i.username)
+    return jsonify(dict(users=username_list, code=200))
 
 
 @bp.route('/user/<user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get(user_id)
+    print(user)
     if user:
-        return jsonify(dict(user=dict(name=user.name, email=user.email), code=200))
+        return jsonify(dict(user=dict(name=user.username, email=user.email), code=200))
     else:
         abort(400)
 @bp.route('/login', methods=['POST'])
