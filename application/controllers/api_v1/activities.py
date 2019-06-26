@@ -5,8 +5,8 @@ import datetime as dt
 
 bp = Blueprint('api_v1_activity', __name__, url_prefix='/activity')
 
-@bp.route('/create_activity/<planner_id>', methods=['POST'])
-def create_activity():
+@bp.route('/create_activity/<plannerid>', methods=['POST'])
+def create_activity(plannerid):
     try:
         activity_name = request.json.get('activity_name')
         start_date = request.json.get('start_date')
@@ -28,12 +28,12 @@ def create_activity():
         if not description:
             raise Exception('description cannot be empty')
 
-        start_datetime = start_date.concat(start_time)
-        end_datetime = end_date.concat(end_time)
+        start_datetime = start_date+' '+start_time
+        end_datetime = end_date+' '+end_time
         activity_object = Activity(name=activity_name,
         start=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
         end=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
-        description=description, planner_id=planner_id)
+        description=description, planner_ID=plannerid)
 
         db.session.add(activity_object)
         db.session.commit()
@@ -43,8 +43,8 @@ def create_activity():
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/view_all_activity/<planner_id>, methods=['GET'])
-def view_activity(planner_id):
+@bp.route('/view_all_activity/<planner_id>', methods=['GET'])
+def view_all_activity(planner_id):
     try:
         jwttoken = request.json.get('jwttoken')
         user = jwt_auth.get_user_from_token(jwttoken)
