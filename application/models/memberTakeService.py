@@ -7,7 +7,7 @@ class MemberTakeService(db.Model):
     #ForeignKey
     member_ID = db.Column(db.Integer, db.ForeignKey('planner.id'), primary_key = True)
     service_ID = db.Column(db.Integer, db.ForeignKey('service.id') ,primary_key = True)
-
+    price = db.Column(db.float, nullable=True)
     # relationship
     db.UniqueConstraint('member_ID', 'service_ID')
     db.relationship('Member', uselist=False, backref='takeServices', lazy='dynamic')
