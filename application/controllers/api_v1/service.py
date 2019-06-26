@@ -3,7 +3,7 @@ from application.models import db, Planner, User, Activity, MemberTakeService, S
 from application.extensions import jwt_auth
 import datetime as dt
 
-bp = Blueprint('api_v1_activity', __name__, url_prefix='/service')
+bp = Blueprint('api_v1_service', __name__, url_prefix='/service')
 
 def check_service(num):
     service = Servicetype.query.filter_by(id=num).first()
@@ -39,7 +39,7 @@ def create_activity(activityid):
                 raise Exception("Location start or Stop is mission")
             #if this location is not in db
             # create End_location first
-            endObj = Service(name=name ,calType=calType,activity_ID=activity_ID,serviceType_ID=service_type\
+            endObj = Service(name=name, calType=calType, activity_ID=activity_ID,serviceType_ID=service_type\
                     ,location_ID=location_stop)
             db.session.add(endObj)
             db.session.commit()
