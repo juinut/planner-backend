@@ -12,7 +12,7 @@ class Activity(db.Model):
     type = db.Column(db.String(255), nullable=False)
     #ForeignKey
     planner_ID = db.Column(db.Integer, db.ForeignKey('planner.id'))
-    location_ID = db.Column(db.Integer,db.ForeignKey('locaion.id'))
+    location_ID = db.Column(db.Integer,db.ForeignKey('location.id'))
     serviceType_ID = db.Column(db.Integer, db.ForeignKey('servicetype.id'), nullable=False)
     # relationship
     planner = db.relationship("Planner",backref='activties',lazy=True)
