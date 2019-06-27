@@ -43,14 +43,17 @@ def view_all_planner():
         jwttoken = request.json.get('jwttoken')
         user = jwt_auth.get_user_from_token(jwttoken)
         plannerlist = Planner.query.filter_by(user_id=user.id).all()
+        planneridlist = []
         plannernamelist = []
         plannerfirstdatelist = []
         plannerlastdatelist = []
         for x in plannerlist:
+            planneridlist.append(x.id)
             plannernamelist.append(x.name)
             plannerfirstdatelist.append(x.first_date)
             plannerlastdatelist.append(x.last_date)
-        return jsonify(dict(name=plannernamelist, startdate=plannerfirstdatelist, enddate=plannerlastdatelist, code=200))
+        return jsonify(dict(id=planneridlist, name=plannernamelist,
+        startdate=plannerfirstdatelist, enddate=plannerlastdatelist, code=200))
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))

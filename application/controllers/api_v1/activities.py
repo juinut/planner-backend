@@ -3,9 +3,9 @@ from application.models import db, Planner, User, Activity
 from application.extensions import jwt_auth
 import datetime as dt
 
-bp = Blueprint('api_v1_activity', __name__, url_prefix='/activity')
+bp = Blueprint('api_v1_activity', __name__, url_prefix='/planner')
 
-@bp.route('/create_activity/<plannerid>', methods=['POST'])
+@bp.route('/<plannerid>/create_activity', methods=['POST'])
 def create_activity(plannerid):
     try:
         activity_name = request.json.get('activity_name')
@@ -43,7 +43,7 @@ def create_activity(plannerid):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/view_all_activity/<planner_id>', methods=['GET'])
+@bp.route('/<planner_id>/view_all_activity', methods=['GET'])
 def view_all_activity(planner_id):
     try:
         jwttoken = request.json.get('jwttoken')
@@ -62,7 +62,7 @@ def view_all_activity(planner_id):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/view_activity/<planner_id>/<activity_id>', methods=['GET'])
+@bp.route('/<planner_id>/view_activity/<activity_id>', methods=['GET'])
 def view_activity(planner_id, activity_id):
     try:
         jwttoken = request.json.get('jwttoken')
