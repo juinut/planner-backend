@@ -5,12 +5,6 @@ import datetime as dt
 
 bp = Blueprint('api_v1_service', __name__, url_prefix='/service')
 
-def check_service(num):
-    service = Servicetype.query.filter_by(id=num).first()
-    if not service:
-        raise Exception('Not found {} type service'.format(num))
-    return service.description
-
 @bp.route('/<plannerid>/<activityid>/createservice', methods=['POST'])
 def create_activity(activityid):
     try:
@@ -72,6 +66,63 @@ def delete_activity(service_id):
         MemberTakeService.query.filter_by(service_ID=service_id).delete()
         Service.query.filter_by(service_ID=service_id).delete()
         return jsonify(dict(success=True, code=200))
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(dict(success=False, message=str(e),code=400))
+
+@bp.route('<activity_id>/<service_id>',methods=['PUT'])
+def update_activity(service_id):
+    try:
+        name = request.json.get('name')
+        calType = request.json.get('calType')#True is multiple, False is mod
+
+        if calType:
+            kid_price = request.json.get("kidPrice")
+            adult = request.json.get("adultPrice")
+            elderly = request.json.get("elderlyPrice")
+            if not kid_price and not adute and not elderly:
+                raise Exception("Plase set price")
+
+        else:
+            price = request.json.get("price")
+            if not price:
+                raise Exception("Plase set price")
+        
+        Service.query.filter_by(id=service_id)\
+        .update({Service.name:name, Service.kidPrice:kid_price, Service.adultPrice:adult,\
+        Service.elderlyPrice:elderly,Service.calType:calType,Service.sumPrice:price})
+        db.session.commit()
+
+        members = request.json.get("user")
+        # jwttoken = request.json.get('jwttoken')
+        # user = jwt_auth.get_user_from_token(jwttoken)
+        if calType:
+            for member in members:
+                mem = Member.query.filter_by(id=member).first()
+                memAge = (dt.date.now()).year - (mem.DoB).year
+                if memAge <= 12:
+                    priceMember = kid_price
+                elif memAge < 60:
+                    priceMember = adult
+                else:
+                    priceMember = elderly
+
+                MemberTakeService.query.filter_by(MemberTakeService.member_ID == mem.id,\
+                    MemberTakeService.service_ID == service_id)\
+                    .update({price:priceMember})
+                db.session.commit()
+
+        else:
+            countMem = len(members)
+            priceM = price/countMem
+            for member in members:
+                MemberTakeService.query.filter_by(MemberTakeService.member_ID == mem.id,\
+                    MemberTakeService.service_ID == service_id)\
+                    .update({price:priceM})
+                db.session.commit()
+
+        return jsonify(dict(success=True,code=200))
 
     except Exception as e:
         db.session.rollback()
