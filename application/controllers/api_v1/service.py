@@ -81,7 +81,7 @@ def update_activity(service_id):
             kid_price = request.json.get("kidPrice")
             adult = request.json.get("adultPrice")
             elderly = request.json.get("elderlyPrice")
-            if not kid_price and not adute and not elderly:
+            if not kid_price and not adult and not elderly:
                 raise Exception("Plase set price")
 
         else:
