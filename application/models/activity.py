@@ -9,11 +9,15 @@ class Activity(db.Model):
     start = db.Column(db.DateTime ,nullable=False)
     end = db.Column(db.DateTime ,nullable=False)
     description = db.Column(db.Text, nullable=True)
+    type = db.Column(db.String(255), nullable=False)
     #ForeignKey
     planner_ID = db.Column(db.Integer, db.ForeignKey('planner.id'))
+    location_ID = db.Column(db.Integer,db.ForeignKey('locaion.id'))
+    serviceType_ID = db.Column(db.Integer, db.ForeignKey('servicetype.id'), nullable=False)
     # relationship
     planner = db.relationship("Planner",backref='activties',lazy=True)
-
+    location = db.relationship("Location",backref='activities',lazy=True)
+    serviceType = db.relationship("Servicetype", backref='services' ,lazy=True)
     # jointrip = db.relationship('Jointask', secondary='jointask', backref=db.backref('activitys', lazy='dynamic'))
 
     def __repr__(self):
