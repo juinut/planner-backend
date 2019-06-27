@@ -15,9 +15,7 @@ def check_service(num):
 def create_activity(activityid):
     try:
         name = request.json.get('name')
-        activity_ID = activityid
-        serviceType_ID = request.json.get("serviceType") 
-        service_type = check_service(serviceType_ID)
+        activity_ID = activityid 
         calType = request.json.get('calType')#True is multiple, False is mod
 
         if calType:
@@ -32,32 +30,11 @@ def create_activity(activityid):
             if not price:
                 raise Exception("Plase set price")
 
-        if service_type == "travel":
-            location_start = request.json.get("location_start")
-            location_stop = request.json.get("location_stop")
-            if not location_start or not location_stop:
-                raise Exception("Location start or Stop is mission")
-            #if this location is not in db
-            # create End_location first
-            endObj = Service(name=name, calType=calType, activity_ID=activity_ID,serviceType_ID=service_type\
-                    ,location_ID=location_stop)
-            db.session.add(endObj)
-            db.session.commit()
-            startObj = Service(name=name,kidPrice=kid_price,adutePrice=adute,elderlyProce=elderly\
-                ,sumPrice=price,calType=calType,activity_ID=activity_ID,serviceType_ID=service_type\
-                    ,location_ID=location_start,serviceRef=endObj.id)
-            db.session.add(startObj)
-            db.commit()
-            serviceID = startObj.id
-        
-        else:
-            location_in =  request.json.get("location_in")
-            Obj = Service(name=name,kidPrice=kid_price,adutePrice=adute,elderlyProce=elderly\
-                ,sumPrice=price,calType=calType,activity_ID=activity_ID,serviceType_ID=service_type\
-                    ,location_ID=location_start)
-            db.session.add(Obj)
-            db.session.commit()
-            serviceID = Obj.id
+        Obj = Service(name=name,kidPrice=kid_price,adutePrice=adute,elderlyProce=elderly\
+            ,sumPrice=price,calType=calType,activity_ID=activity_ID)
+        db.session.add(Obj)
+        db.session.commit()
+        serviceID = Obj.id
 
         members = request.json.get("user")
         # jwttoken = request.json.get('jwttoken')
