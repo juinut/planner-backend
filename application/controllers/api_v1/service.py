@@ -35,7 +35,7 @@ def create_activity(activityid):
         # user = jwt_auth.get_user_from_token(jwttoken)
         if calType:
             for member in members:
-                mem = Member.query.filter_by(id=member).first()
+                mem = Member.query.filter_by(id == member).first()
                 memAge = (dt.date.now()).year - (mem.DoB).year
                 if memAge <= 12:
                     priceMember = kid_price
@@ -99,7 +99,7 @@ def update_activity(service_id):
         # user = jwt_auth.get_user_from_token(jwttoken)
         if calType:
             for member in members:
-                mem = Member.query.filter_by(id=member).first()
+                mem = Member.query.filter_by(id==member).first()
                 memAge = (dt.date.now()).year - (mem.DoB).year
                 if memAge <= 12:
                     priceMember = kid_price
@@ -117,8 +117,8 @@ def update_activity(service_id):
             countMem = len(members)
             priceM = price/countMem
             for member in members:
-                MemberTakeService.query.filter_by(MemberTakeService.member_ID == mem.id,\
-                    MemberTakeService.service_ID == service_id)\
+                MemberTakeService.query.filter_by(member_ID = mem.id,\
+                    service_ID = service_id)\
                     .update({price:priceM})
                 db.session.commit()
 
@@ -127,3 +127,59 @@ def update_activity(service_id):
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e),code=400))
+
+@bp.route('<activity_id>',methods=['GET'])
+def viewServiceInActivity(activity_id):
+    try:
+        returnServices = Service.query.filter_by(activity_id).all()
+        servicenamelist = []
+        servicecaltypelist = []
+        servicekidlist = []
+        serviceadultlist = []
+        serviceelderylist = []
+        servicesumpricelist = []
+        serviceallpricelist = []
+        for service in returnServices:
+            servicenamelist.append(service.name)
+            servicecaltypelist.append(service.calType)
+            servicekidlist.append(service.kidPrice)
+            serviceadultlist.append(service.adultPrice)
+            serviceelderylist.append(service.elderlyPrice)
+            servicesumpricelist.append(service.sumPrice)
+            allprice = 0
+            for price in service.takeServices:
+                allprice += price.price
+            serviceallpricelist.append(allprice)
+        
+        return jsonify(dict(servicename=servicenamelist, caltype=servicecaltypelist\
+            , kid=servicekidlist, adult=serviceadultlist, elderly=serviceelderylist\
+            , sumprice=servicesumpricelist, allprice=servicesumpricelist\
+            , code = 200))
+        
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(dict(success=False, message=str(e),code=400))
+
+@bp.route('<activity_id>/<service_ID>/member',methods=['GET'])
+def viewMemberPrice(service_ID):
+    try:
+        service = Service.query.filter_by(id = service_ID)
+        if not service:
+            raise 'service not found'
+        
+        members = service.takeServices
+        memberlist = []
+        membergender = []
+        memberpricelist = []
+        for member in members:
+            membername = Member.query.filter_by(id = member.member_ID).one()
+            memberlist.append(membername.fristname)
+            membergender.append(membername.gender)
+            memberpricelist.append(member.price)
+        
+        return jsonify(dict(name=memberlist, gender=membergender,\
+            price=memberpricelist))
+    except Exception as e:
+        return jsonify(dict(success=False, message=str(e),code=400))
+    
