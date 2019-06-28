@@ -2,6 +2,7 @@ from flask import request, Blueprint, jsonify, abort
 from application.models import db, Planner, User, Activity
 from application.extensions import jwt_auth
 import datetime as dt
+from flask import request
 
 bp = Blueprint('api_v1_activity', __name__, url_prefix='/planner')
 
@@ -33,7 +34,7 @@ def create_activity(plannerid):
         activity_object = Activity(name=activity_name,
         start=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
         end=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
-        description=description, planner_ID=plannerid, serviceType_ID='0')
+        description=description, planner_ID=int(plannerid), serviceType_ID=1,location_ID=1)
 
         db.session.add(activity_object)
         db.session.commit()
@@ -46,7 +47,8 @@ def create_activity(plannerid):
 @bp.route('/planner_id=<planner_id>/view_all_activity', methods=['GET'])
 def view_all_activity(planner_id):
     try:
-        jwttoken = request.json.get('jwttoken')
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
+        # jwttoken = request.json.get('jwttoken')
         user = jwt_auth.get_user_from_token(jwttoken)
         desiredplanner = Planner.query.filter_by(id=planner_id).one()
         listofactivity = Activity.query.filter_by(planner_ID=planner_id).all()
@@ -76,7 +78,7 @@ def view_all_activity(planner_id):
 @bp.route('/<planner_id>/view_activity/<activity_id>', methods=['GET'])
 def view_activity(planner_id, activity_id):
     try:
-        jwttoken = request.json.get('jwttoken')
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
         desiredplanner = Planner.query.filter_by(id=planner_id).one()
         desiredactiity = Activity.query.filter_by(id=activity_id).one()
@@ -93,14 +95,14 @@ def view_activity(planner_id, activity_id):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/edit_activity/<activity_id>', methods=['POST'])
-def edit_planner(activity_id):
+@bp.route('/<planner_id>/edit_activity/<activity_id>', methods=['POST'])
+def edit_activity(planner_id, activity_id):
     try:
         activity_name = request.json.get('activity_name')
         start_datetime = request.json.get('start_datetime')
         end_datetime = request.json.get('end_datetime')
         description = request.json.get('description')
-        jwttoken = request.json.get('jwttoken')
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
 
         if not activity_name:
@@ -112,8 +114,8 @@ def edit_planner(activity_id):
         if not description:
             raise Exception('description cannot be empty')
 
+        desiredplanner = Planner.query.filter_by(id=planner_id).one()
         desiredactiity = Activity.query.filter_by(id=activity_id).one()
-
         if user.id == desiredplanner.user_id:
             if desiredplanner.id == desiredactiity.planner_ID:
                 Activity.query.filter(Activity.id == activity_id).\
