@@ -58,7 +58,7 @@ def view_all_planner():
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/view_planner/<planner_id>', methods=['POST'])
+@bp.route('/view_planner/planner_id=<planner_id>', methods=['POST'])
 def view_planner(planner_id):
     try:
         jwttoken = request.headers.get('Authorization').split(' ')[1]
