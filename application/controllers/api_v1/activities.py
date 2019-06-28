@@ -118,8 +118,10 @@ def edit_activity(planner_id, activity_id):
         desiredactiity = Activity.query.filter_by(id=activity_id).one()
         if user.id == desiredplanner.user_id:
             if desiredplanner.id == desiredactiity.planner_ID:
+                start_datetime=dt.datetime.strptime(start_datetime, '%Y-%m-%d').date(),
+                end_datetime=dt.datetime.strptime(end_datetime, '%Y-%m-%d').date(),
                 Activity.query.filter(Activity.id == activity_id).\
-                update({Activity.name: activity_name}, synchronize_session=False)
+                update({Activity.name: activity_name, Activity.start: start_datetime, Activity.end: end_datetime, Activity.description: description}, synchronize_session=False)
                 db.session.commit()
                 return jsonify(dict(success=True), 201)
             else:
