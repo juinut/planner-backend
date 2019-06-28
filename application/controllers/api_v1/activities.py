@@ -33,7 +33,7 @@ def create_activity(plannerid):
         activity_object = Activity(name=activity_name,
         start=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
         end=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
-        description=description, planner_ID=plannerid)
+        description=description, planner_ID=plannerid, serviceType_ID='0')
 
         db.session.add(activity_object)
         db.session.commit()
@@ -43,19 +43,30 @@ def create_activity(plannerid):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/<planner_id>/view_all_activity', methods=['GET'])
+@bp.route('/planner_id=<planner_id>/view_all_activity', methods=['GET'])
 def view_all_activity(planner_id):
     try:
         jwttoken = request.json.get('jwttoken')
         user = jwt_auth.get_user_from_token(jwttoken)
         desiredplanner = Planner.query.filter_by(id=planner_id).one()
+        listofactivity = Activity.query.filter_by(planner_ID=planner_id).all()
+        if not desiredplanner: raise Exception('no such planner')
+        if not listofactivity: raise Exception('no activity in planner')
         if user.id == desiredplanner.user_id:
-            if desiredplanner.id == desiredactivity.planner_ID:
-                returnactivity = [desiredactivity.id, desiredactivity.name, desiredactivity.start,
-                desiredactivity.end, desiredactivity.description]
-                return jsonify(dict(activity=returnactivity, code=201))
-            else:
-                raise Exception('no such activity')
+            activityidlist = []
+            activitynamelist = []
+            activitystartdatetime = []
+            activityenddatetime = []
+            activityservicetypelist = []
+            for x in listofactivity:
+                activityidlist.append(x.id)
+                activitynamelist.append(x.name)
+                activitystartdatetime.append(x.start)
+                activityenddatetime.append(x.end)
+                activityservicetypelist.append(x.serviceType_ID)
+            return jsonify(dict(id=activityidlist, name=activitynamelist,
+            startdatetime=activitystartdatetime, end_datetime=activityenddatetime,
+            servicetypeID=activityservicetypelist, code=200))
         else:
             raise Exception('no such user')
     except Exception as e:
