@@ -14,7 +14,8 @@ def create_planner():
         description = request.json.get('description')
         jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
-
+        print(user.id)
+        print("a")
         if not planner_name:
             raise Exception('planner_name cannot be empty')
         if not first_date:
@@ -58,13 +59,12 @@ def view_all_planner():
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/view_planner/<planner_id>', methods=['POST'])
+@bp.route('/view_planner/<planner_id>', methods=['GET'])
 def view_planner(planner_id):
     try:
         jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
         desiredplanner = Planner.query.filter_by(id=planner_id).one()
-
         if user.id == desiredplanner.user_id:
             returnplanner = [desiredplanner.id, desiredplanner.name,
             desiredplanner.first_date, desiredplanner.last_date,
