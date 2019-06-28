@@ -60,7 +60,7 @@ def create_activity(activityid):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e),code=400))
 
-@bp.route('delete_service/<service_id>', methods=['DELETE'])
+@bp.route('<service_id>/delete', methods=['DELETE'])
 def delete_activity(service_id):
     try:
         MemberTakeService.query.filter_by(service_ID=service_id).delete()

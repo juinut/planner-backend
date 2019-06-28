@@ -12,7 +12,7 @@ def create_planner():
         first_date = request.json.get('first_date')
         last_date = request.json.get('last_date')
         description = request.json.get('description')
-        jwttoken = request.json.get('jwttoken')
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
 
         if not planner_name:
@@ -37,10 +37,10 @@ def create_planner():
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/view_all_planner', methods=['POST'])
+@bp.route('/view_all_planner', methods=['GET'])
 def view_all_planner():
     try:
-        jwttoken = request.json.get('jwttoken')
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
         plannerlist = Planner.query.filter_by(user_id=user.id).all()
         planneridlist = []
@@ -61,7 +61,7 @@ def view_all_planner():
 @bp.route('/view_planner/<planner_id>', methods=['GET'])
 def view_planner(planner_id):
     try:
-        jwttoken = request.json.get('jwttoken')
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
         desiredplanner = Planner.query.filter_by(id=planner_id).one()
         if user.id == desiredplanner.user_id:
@@ -75,14 +75,14 @@ def view_planner(planner_id):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/edit_planner/<planner_id>', methods=['POST'])
+@bp.route('/edit_planner/<planner_id>', methods=['PUT'])
 def edit_planner(planner_id):
     try:
         planner_name = request.json.get('planner_name')
         first_date = request.json.get('first_date')
         last_date = request.json.get('last_date')
         description = request.json.get('description')
-        jwttoken = request.json.get('jwttoken')
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
 
 
@@ -114,7 +114,7 @@ def delete_planner(planner_id):
         first_date = request.json.get('first_date')
         last_date = request.json.get('last_date')
         description = request.json.get('description')
-        jwttoken = request.json.get('jwttoken')
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
 
         if not planner_name:
