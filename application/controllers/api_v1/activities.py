@@ -75,7 +75,7 @@ def view_all_activity(plannerid):
                 activityservicetypelist.append(x.serviceType_ID)
                 activitylocationidlist.append(x.location_ID)
             return jsonify(dict(id=activityidlist, name=activitynamelist,
-            startdatetime=activitystartdatetime, end_datetime=activityenddatetime,
+            startdatetime=activitystartdatetime, enddatetime=activityenddatetime,
             servicetypeID=activityservicetypelist, locationID=activitylocationidlist,
              code=200))
         else:
