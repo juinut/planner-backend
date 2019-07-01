@@ -18,14 +18,15 @@ def find_by_firstname(firstname):
 def list_users():
     data = Member.query.all()
     member_list = []
-    for i in data:
-        member_list.append(i.username)
+    for i in data: 
+        member_list.append(i.firstname)
+        print(i)
     return jsonify(dict(members=member_list, code=200))
 
 @bp.route('/create_member', methods=['POST'])
 def create_member():
     try:
-        jwttoken = request.json.get('jwttoken')
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
         user_id = user.id
         firstname = request.json.get('firstname')
@@ -43,7 +44,7 @@ def create_member():
             raise Exception('gender is empty')
 
         tocreateuserobject = Member(firstname=firstname,
-        lastname=lastname,DoB=dt.datetime.strptime(dob, '%Y-%m-%d').date(), gender=gender, user_ID=user_id)
+        lastname=lastname,DoB=dt.datetime.strptime(dob, '%Y-%m-%d').date(), gender=gender, user_ID=int(user_id))
 
         db.session.add(tocreateuserobject)
         db.session.commit()
