@@ -6,9 +6,14 @@ from flask import request
 
 bp = Blueprint('api_v1_activity', __name__, url_prefix='/planner')
 
-@bp.route('/<plannerid>/create_activity', methods=['POST'])
+@bp.route('/plannerid=<plannerid>/create_activity', methods=['POST'])
 def create_activity(plannerid):
     try:
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
+        user = jwt_auth.get_user_from_token(jwttoken)
+        desiredplanner = Planner.query.filter_by(id=plannerid).one()
+        if user.id != desiredplanner.user_id:
+            raise Exception('access denied')
         activity_name = request.json.get('activity_name')
         start_date = request.json.get('start_date')
         start_time = request.json.get('start_time')
@@ -44,14 +49,15 @@ def create_activity(plannerid):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/planner_id=<planner_id>/view_all_activity', methods=['GET'])
-def view_all_activity(planner_id):
+@bp.route('/plannerid=<plannerid>/view_all_activity', methods=['GET'])
+def view_all_activity(plannerid):
     try:
         jwttoken = request.headers.get('Authorization').split(' ')[1]
-        # jwttoken = request.json.get('jwttoken')
         user = jwt_auth.get_user_from_token(jwttoken)
-        desiredplanner = Planner.query.filter_by(id=planner_id).one()
-        listofactivity = Activity.query.filter_by(planner_ID=planner_id).all()
+        desiredplanner = Planner.query.filter_by(id=plannerid).one()
+        if user.id != desiredplanner.user_id:
+            raise Exception('access denied')
+        listofactivity = Activity.query.filter_by(planner_ID=plannerid).all()
         if not desiredplanner: raise Exception('no such planner')
         if not listofactivity: raise Exception('no activity in planner')
         if user.id == desiredplanner.user_id:
@@ -60,15 +66,18 @@ def view_all_activity(planner_id):
             activitystartdatetime = []
             activityenddatetime = []
             activityservicetypelist = []
+            activitylocationidlist = []
             for x in listofactivity:
                 activityidlist.append(x.id)
                 activitynamelist.append(x.name)
                 activitystartdatetime.append(x.start)
                 activityenddatetime.append(x.end)
                 activityservicetypelist.append(x.serviceType_ID)
+                activitylocationidlist.append(x.location_ID)
             return jsonify(dict(id=activityidlist, name=activitynamelist,
             startdatetime=activitystartdatetime, end_datetime=activityenddatetime,
-            servicetypeID=activityservicetypelist, code=200))
+            servicetypeID=activityservicetypelist, locationID=activitylocationidlist,
+             code=200))
         else:
             raise Exception('no such user')
     except Exception as e:
@@ -81,6 +90,8 @@ def view_activity(planner_id, activity_id):
         jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
         desiredplanner = Planner.query.filter_by(id=planner_id).one()
+        if user.id != desiredplanner.user_id:
+            raise Exception('access denied')
         desiredactiity = Activity.query.filter_by(id=activity_id).one()
         if user.id == desiredplanner.user_id:
             if desiredplanner.id == desiredactiity.planner_ID:
