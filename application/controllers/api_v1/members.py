@@ -23,6 +23,30 @@ def list_users():
         print(i)
     return jsonify(dict(members=member_list, code=200))
 
+@bp.route('/delete_member/<id>', methods=['DELETE'])
+def delete_member(id):
+    try:
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
+        user = jwt_auth.get_user_from_token(jwttoken)
+        user_id = user.id
+        member = Member.query.filter_by(id=id).first()
+        user_id_member = Member.query.filter_by(user_id=user_ID).first()
+        if user_id == user_id_member.user_ID:
+            if not member:
+                raise Exception('member is deleted')
+            
+            todeleteobject = member
+            db.session.remove(todeleteobject)
+            db.session.commit()
+            return jsonify(dict(success=True, code=201))
+       else:
+            raise Exception('no such member in your id')
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(dict(success=False, message=str(e),code=400))
+        
+
 @bp.route('/create_member', methods=['POST'])
 def create_member():
     try:
