@@ -11,7 +11,7 @@ class Member(db.Model):
     DoB = db.Column(db.Date, nullable=False)
     gender = db.Column(db.CHAR(1), nullable=False)
     # foreignKey
-    user_ID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     # relationship
     user = db.relationship("User", backref="members", lazy=True)

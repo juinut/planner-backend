@@ -29,17 +29,16 @@ def delete_member(id):
         jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
         user_id = user.id
-        member = Member.query.filter_by(id=id).first()
-        user_id_member = Member.query.filter_by(user_id=user_ID).first()
-        if user_id == user_id_member.user_ID:
+        member = Member.query.filter_by(id=id)
+        user_id_member = Member.query.filter_by(user_id=user_id).first()
+        if user_id == user_id_member.user_id:
             if not member:
-                raise Exception('member is deleted')
+                raise Exception('member has been deleted')
             
-            todeleteobject = member
-            db.session.remove(todeleteobject)
+            member.delete()
             db.session.commit()
             return jsonify(dict(success=True, code=201))
-       else:
+        else:
             raise Exception('no such member in your id')
 
     except Exception as e:
