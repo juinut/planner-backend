@@ -18,10 +18,12 @@ def find_by_firstname(firstname):
 def list_users():
     data = Member.query.all()
     member_list = []
+    memberid_list = []
     for i in data: 
         member_list.append(i.firstname)
+        memberid_list.append(i.id)
         print(i)
-    return jsonify(dict(members=member_list, code=200))
+    return jsonify(dict(members=member_list,id=memberid_list, code=200))
 
 @bp.route('/delete_member/<id>', methods=['DELETE'])
 def delete_member(id):
