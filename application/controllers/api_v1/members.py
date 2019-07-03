@@ -67,7 +67,7 @@ def create_member():
             raise Exception('gender is empty')
 
         tocreateuserobject = Member(firstname=firstname,
-        lastname=lastname,DoB=dt.datetime.strptime(dob, '%Y-%m-%d').date(), gender=gender, user_ID=int(user_id))
+        lastname=lastname,DoB=dt.datetime.strptime(dob, '%Y-%m-%d').date(), gender=gender, user_id=int(user_id))
 
         db.session.add(tocreateuserobject)
         db.session.commit()
