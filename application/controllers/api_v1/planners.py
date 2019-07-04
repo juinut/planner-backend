@@ -108,36 +108,27 @@ def edit_planner(planner_id):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
-@bp.route('/delete_planner/<planner_id>', methods=['GET'])
-def delete_planner(planner_id):
+@bp.route('/delete_planner/<planner_id>', methods=['DELETE'])
+def delete_member(planner_id):
     try:
-        planner_name = request.json.get('planner_name')
-        first_date = request.json.get('first_date')
-        last_date = request.json.get('last_date')
-        description = request.json.get('description')
         jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
-
-        if not planner_name:
-            raise Exception('planner_name cannot be empty')
-        if not first_date:
-            raise Exception('first_date cannot be empty')
-        if not last_date:
-            raise Exception('last_date cannot be empty')
-        if not description:
-            raise Exception('description cannot be empty')
-
-        desiredplanner = Planner.query.filter_by(id=planner_id).one()
-        if user.id == desiredplanner.user_id:
-            Planner.query.filter(Planner.id == planner_id).\
-            update({Planner.name: planner_name}, synchronize_session=False)
+        user_id = user.id
+        planner = Planner.query.filter_by(id=planner_id)
+        user_id_planner = Planner.query.filter_by(user_id=user_id).first()
+        if user_id == user_id_planner.user_id:
+            if not planner:
+                raise Exception('planner has been deleted')
+            
+            planner.delete()
             db.session.commit()
             return jsonify(dict(success=True, code=201))
         else:
             raise Exception('no such planner in your id')
+
     except Exception as e:
         db.session.rollback()
-        return jsonify(dict(success=False, message=str(e), code=400))
+        return jsonify(dict(success=False, message=str(e),code=400))
 
 @bp.route('/checkplannerbelongging/planner_id=<planner_id>', methods=['GET'])
 def planner_belonging(planner_id):
