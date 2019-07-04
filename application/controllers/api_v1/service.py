@@ -6,7 +6,7 @@ import datetime as dt
 bp = Blueprint('api_v1_service', __name__, url_prefix='/service')
 
 @bp.route('/<plannerid>/<activityid>/createservice', methods=['POST'])
-def create_activity(activityid):
+def create_service(activityid):
     try:
         name = request.json.get('name')
         activity_ID = activityid 
@@ -61,7 +61,7 @@ def create_activity(activityid):
         return jsonify(dict(success=False, message=str(e),code=400))
 
 @bp.route('<service_id>/delete', methods=['DELETE'])
-def delete_activity(service_id):
+def delete_service(service_id):
     try:
         MemberTakeService.query.filter_by(service_ID=service_id).delete()
         Service.query.filter_by(service_ID=service_id).delete()
@@ -72,7 +72,7 @@ def delete_activity(service_id):
         return jsonify(dict(success=False, message=str(e),code=400))
 
 @bp.route('<activity_id>/<service_id>',methods=['PUT'])
-def update_activity(service_id):
+def update_service(service_id):
     try:
         name = request.json.get('name')
         calType = request.json.get('calType')#True is multiple, False is mod
