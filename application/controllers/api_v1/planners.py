@@ -14,8 +14,6 @@ def create_planner():
         description = request.json.get('description')
         jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
-        print(user.id)
-        print("a")
         if not planner_name:
             raise Exception('planner_name cannot be empty')
         if not first_date:
@@ -119,7 +117,7 @@ def delete_member(planner_id):
         if user_id == user_id_planner.user_id:
             if not planner:
                 raise Exception('planner has been deleted')
-            
+
             planner.delete()
             db.session.commit()
             return jsonify(dict(success=True, code=201))

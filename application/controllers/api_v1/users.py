@@ -50,12 +50,10 @@ def get_token():
         user = find_by_username(user_name)
         if user.password == password:
             jwttoken = jwt_auth.generate_token(user.id)
-            jwtrefreshtoken = jwt_auth.generate_refresh_token(user.id)
             return jsonify(dict(message='Logged in as {}'.format(user.username),
-            JWTToken=jwttoken, JWTRToken=jwtrefreshtoken, code=200))
+            JWTToken=jwttoken, code=200))
         else:
             raise Exception('Wrong credentials')
-
 
     except Exception as e:
         return jsonify(dict(message=str(e), code=404))

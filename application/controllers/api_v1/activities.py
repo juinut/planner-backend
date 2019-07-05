@@ -142,25 +142,3 @@ def edit_activity(planner_id, activity_id):
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e))), 400
-
-@bp.route('/delete_activity/<activity_id>', methods=['DELETE'])
-def delete_member(activity_id):
-    try:
-        jwttoken = request.headers.get('Authorization').split(' ')[1]
-        user = jwt_auth.get_user_from_token(jwttoken)
-        user_id = user.id
-        activity = Activity.query.filter_by(id=activity_id)
-        user_id_activity = Activity.query.filter_by(user_id=user_id).first()
-        if user_id == user_id_member.user_id:
-            if not activity:
-                raise Exception('activity has been deleted')
-            
-            activity.delete()
-            db.session.commit()
-            return jsonify(dict(success=True, code=201))
-        else:
-            raise Exception('no such member in your id')
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(dict(success=False, message=str(e),code=400))
