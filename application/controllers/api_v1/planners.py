@@ -128,16 +128,16 @@ def delete_member(planner_id):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e),code=400))
 
-@bp.route('/checkplannerbelongging/planner_id=<planner_id>', methods=['GET'])
+@bp.route('/checkplannerbelonging/planner_id=<planner_id>', methods=['GET'])
 def planner_belonging(planner_id):
     try:
         jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
         desiredplanner = Planner.query.filter_by(id=planner_id).one()
         if user.id == desiredplanner.user_id:
-            return jsonify(dict(result=True, code=200))
+            return jsonify(dict(result=True, code=201))
         else:
-            return jsonify(dict(result=False, code=200))
+            return jsonify(dict(result=False, code=201))
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
