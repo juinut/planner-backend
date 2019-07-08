@@ -16,7 +16,9 @@ def find_by_firstname(firstname):
 
 @bp.route('/member', methods=['GET'])
 def list_users():
-    data = Member.query.all()
+    jwttoken = request.headers.get('Authorization').split(' ')[1]
+    user = jwt_auth.get_user_from_token(jwttoken)
+    data = Member.query.filter_by(user_id=user.id)
     member_list = []
     memberid_list = []
     for i in data: 
