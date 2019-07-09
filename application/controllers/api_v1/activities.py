@@ -40,8 +40,8 @@ def create_activity(plannerid):
         if atype == 1:
             start = request.json.get('start')
             stop = request.json.get('stop')
-            start_object = Location(name=start['name'], latitude=start['lat'], longtitude=start['lng'])
-            stop_object = Location(name=stop['name'], latitude=stop['lat'], longtitude=stop['lng'])
+            start_object = Location(name=start['name'], latitude=str(start['lat']), longtitude=str(start['lng']))
+            stop_object = Location(name=stop['name'], latitude=str(stop['lat']), longtitude=str(stop['lng']))
             db.session.add(start_object)
             db.session.add(stop_object)
             db.session.commit()
@@ -61,7 +61,7 @@ def create_activity(plannerid):
             return jsonify(dict(success=True, code=201))
         else:
             inl = request.json.get('in')
-            in_object = Location(name=inl['name'],latitude=inl['lat'],longtitude=inl['lng'])
+            in_object = Location(name=inl['name'],latitude=str(inl['lat']),longtitude=str(inl['lng']))
             db.session.add(in_object)
             db.session.commit()
             activity_object_in = Activity(name=activity_name,
