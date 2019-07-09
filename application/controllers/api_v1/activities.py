@@ -57,7 +57,7 @@ def view_all_activity(plannerid):
         desiredplanner = Planner.query.filter_by(id=plannerid).one()
         if user.id != desiredplanner.user_id:
             raise Exception('access denied')
-        listofactivity = Activity.query.filter_by(planner_ID=plannerid).order_by(Activity.start.asc()).limit(3).all()
+        listofactivity = Activity.query.filter_by(planner_ID=plannerid).order_by(Activity.start.asc()).all()
         if not desiredplanner: raise Exception('no such planner')
         if not listofactivity: raise Exception('no activity in planner')
         if user.id == desiredplanner.user_id:
