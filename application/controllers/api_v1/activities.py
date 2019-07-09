@@ -1,5 +1,5 @@
 from flask import request, Blueprint, jsonify, abort
-from application.models import db, Planner, User, Activity
+from application.models import db, Planner, User, Activity, Location
 from application.extensions import jwt_auth
 import datetime as dt
 from flask import request
@@ -20,6 +20,7 @@ def create_activity(plannerid):
         end_date = request.json.get('end_date')
         end_time = request.json.get('end_time')
         description = request.json.get('description')
+        atype = request.json.get('type')
 
         if not activity_name:
             raise Exception('activity_name cannot be empty')
@@ -36,14 +37,42 @@ def create_activity(plannerid):
 
         start_datetime = start_date+' '+start_time
         end_datetime = end_date+' '+end_time
-        activity_object = Activity(name=activity_name,
-        start=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
-        end=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
-        description=description, planner_ID=int(plannerid), serviceType_ID=1,location_ID=1)
 
-        db.session.add(activity_object)
-        db.session.commit()
-        return jsonify(dict(success=True, code=201))
+        if int(atype) == 1:
+            start = request.json.get('start')
+            stop = request.json.get('stop')
+            start_object = Location(name=start.name,latitude=start.lat,longtitude=start.lng)
+            stop_object = Location(name=stop.name,latitude=stop.lat,longtitude=stop.lng)
+            db.session.add(start_object)
+            db.session.add(stop_object)
+            db.session.commit()
+            activity_object_stop = Activity(name=activity_name,
+            start=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
+            end=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
+            description=description, planner_ID=int(plannerid), serviceType_ID=int(atype),location_ID=stop_object.id)
+            db.session.add(activity_object_stop)
+            db.session.commit()
+            activity_object_start = Activity(name=activity_name,
+            start=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
+            end=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
+            description=description, planner_ID=int(plannerid), serviceType_ID=int(atype),location_ID=start_object.id\
+               , ref=activity_object_stop.id )
+            db.session.add(activity_object_stop)
+            db.session.commit()
+            return jsonify(dict(success=True, code=201))
+
+        else:
+            inl = request.json.get('in')
+            in_object = stop_object = Location(name=inl.name,latitude=inl.lat,longtitude=inl.lng)
+            db.session.add(in_object)
+            db.session.commit()
+            activity_object_in = Activity(name=activity_name,
+            start=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
+            end=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
+            description=description, planner_ID=int(plannerid), serviceType_ID=int(atype),location_ID=in_object.id)
+            db.session.add(activity_object)
+            db.session.commit()
+            return jsonify(dict(success=True, code=201))
 
     except Exception as e:
         db.session.rollback()

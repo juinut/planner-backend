@@ -9,6 +9,7 @@ class Activity(db.Model):
     start = db.Column(db.DateTime ,nullable=False)
     end = db.Column(db.DateTime ,nullable=False)
     description = db.Column(db.Text, nullable=True)
+    ref = db.Column(db.Integer, nullable=True)
     #ForeignKey
     planner_ID = db.Column(db.Integer, db.ForeignKey('planner.id'))
     location_ID = db.Column(db.Integer,db.ForeignKey('location.id'))
