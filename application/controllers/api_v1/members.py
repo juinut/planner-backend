@@ -75,6 +75,9 @@ def create_member():
             raise Exception('gender is empty')
 
         DoB= (dt.datetime.now()).year-dob
+        if(DoB < 0):
+            raise Exception('please fill correct age')
+            
         tocreateuserobject = Member(firstname=firstname,
         lastname=lastname,DoB=DoB, gender=gender, user_id=int(user_id))
         db.session.add(tocreateuserobject)
