@@ -40,8 +40,8 @@ def create_activity(plannerid):
         if atype == 1:
             start = request.json.get('start')
             stop = request.json.get('stop')
-            start_object = Location(name=start['name'], latitude=start['lat'], longtitude=start['lng'])
-            stop_object = Location(name=stop['name'], latitude=stop['lat'], longtitude=stop['lng'])
+            start_object = Location(name=start['name'], latitude=str(start['lat']), longtitude=str(start['lng']))
+            stop_object = Location(name=stop['name'], latitude=str(stop['lat']), longtitude=str(stop['lng']))
             db.session.add(start_object)
             db.session.add(stop_object)
             db.session.commit()
@@ -61,7 +61,7 @@ def create_activity(plannerid):
             return jsonify(dict(success=True, code=201))
         else:
             inl = request.json.get('in')
-            in_object = Location(name=inl['name'],latitude=inl['lat'],longtitude=inl['lng'])
+            in_object = Location(name=inl['name'],latitude=str(inl['lat']),longtitude=str(inl['lng']))
             db.session.add(in_object)
             db.session.commit()
             activity_object_in = Activity(name=activity_name,
@@ -171,3 +171,26 @@ def edit_activity(planner_id, activity_id):
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e))), 400
+
+@bp.route('/planner_id=<planner_id>/delete_activity/activity_id=<activity_id>', methods=['DELETE'])
+def delete_activity(planner_id, activity_id):
+    try:
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
+        user = jwt_auth.get_user_from_token(jwttoken)
+        user_id = user.id
+        activity = Activity.query.filter_by(id=activity_id, planner_ID=planner_id)
+        user_id_planner = Planner.query.filter_by(user_id=user_id).first()
+
+        if user_id == user_id_planner.user_id:
+            if not activity:
+                raise Exception('activity has been deleted')
+
+            activity.delete()
+            db.session.commit()
+            return jsonify(dict(success=True, code=201))
+        else:
+            raise Exception('no such activity in your planner')
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(dict(success=False, message=str(e),code=400))

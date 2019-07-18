@@ -107,7 +107,7 @@ def edit_planner(planner_id):
         return jsonify(dict(success=False, message=str(e), code=400))
 
 @bp.route('/delete_planner/<planner_id>', methods=['DELETE'])
-def delete_member(planner_id):
+def delete_planner(planner_id):
     try:
         jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
