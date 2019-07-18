@@ -8,7 +8,7 @@ class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(255), nullable=False)
     lastname = db.Column(db.String(255), nullable=False)
-    DoB = db.Column(db.Date, nullable=False)
+    DoB = db.Column(db.Integer, nullable=False)
     gender = db.Column(db.CHAR(1), nullable=False)
     # foreignKey
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

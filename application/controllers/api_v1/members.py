@@ -8,7 +8,7 @@ bp = Blueprint('api_v1_member', __name__, url_prefix='/api/v1')
 def find_by_firstname(firstname):
     member = Member.query.filter_by(firstname=firstname).first()
 
-    print(user)
+    print(member)
     if not member:
         raise Exception('Member {} doesn\'s exit'.format(firstname))
     else:
@@ -21,11 +21,15 @@ def list_users():
     data = Member.query.filter_by(user_id=user.id)
     member_list = []
     memberid_list = []
-    for i in data: 
+    memberlastname_list = []
+    membergender_list = []
+    for i in data : 
         member_list.append(i.firstname)
         memberid_list.append(i.id)
+        memberlastname_list.append(i.lastname)
+        membergender_list.append(i.gender)
         print(i)
-    return jsonify(dict(members=member_list,id=memberid_list, code=200))
+    return jsonify(dict(members=member_list,id=memberid_list,lastname=memberlastname_list,gender=memberlastname_list, code=200))
 
 @bp.route('/delete_member/<id>', methods=['DELETE'])
 def delete_member(id):
@@ -70,9 +74,9 @@ def create_member():
         if not gender:
             raise Exception('gender is empty')
 
+        DoB= (dt.datetime.now()).year-dob
         tocreateuserobject = Member(firstname=firstname,
-        lastname=lastname,DoB=dt.datetime.strptime(dob, '%Y-%m-%d').date(), gender=gender, user_id=int(user_id))
-
+        lastname=lastname,DoB=DoB, gender=gender, user_id=int(user_id))
         db.session.add(tocreateuserobject)
         db.session.commit()
         return jsonify(dict(success=True, code=201))
