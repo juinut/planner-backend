@@ -24,6 +24,7 @@ def list_users():
     memberlastname_list = []
     membergender_list = []
     memberage=[]
+    isownerlist=[]
     for i in data : 
         member_list.append(i.firstname)
         memberid_list.append(i.id)
@@ -31,7 +32,8 @@ def list_users():
         membergender_list.append(i.gender)
         age = dt.datetime.now().year - i.DoB
         memberage.append(age)
-    return jsonify(dict(members=member_list,id=memberid_list,lastname=memberlastname_list,gender=membergender_list,age=memberage, code=200))
+        isownerlist.append(i.is_owner)
+    return jsonify(dict(members=member_list,id=memberid_list,lastname=memberlastname_list,gender=membergender_list,age=memberage,owner=isownerlist, code=200))
 
 @bp.route('/delete_member/<id>', methods=['DELETE'])
 def delete_member(id):

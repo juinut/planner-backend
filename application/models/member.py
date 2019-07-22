@@ -12,6 +12,7 @@ class Member(db.Model):
     gender = db.Column(db.CHAR(1), nullable=False)
     # foreignKey
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    is_owner = db.Column(db.Boolean, default=False)
 
     # relationship
     user = db.relationship("User", backref="members", lazy=True)

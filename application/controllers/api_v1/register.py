@@ -56,9 +56,8 @@ def create_user():
 
         db.session.add(tocreateuserobject)
         db.session.commit()
-
-        DoB=dt.datetime.now().year - dt.datetime.strptime(dob, '%Y-%m-%d').date().year
-        createMember = Member(firstname = firstname, lastname = lastname, DoB = DoB, gender=gender, user_id=int(tocreateuserobject.id))
+        DoB=int((dt.datetime.strptime(dob, '%Y-%m-%d').date()).year)
+        createMember = Member(firstname = firstname, lastname = lastname, DoB = DoB, gender=gender, user_id=int(tocreateuserobject.id),is_owner=True)
         db.session.add(createMember)
         db.session.commit()
 
