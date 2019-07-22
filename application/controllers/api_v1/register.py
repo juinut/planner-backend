@@ -1,5 +1,5 @@
 from flask import request, Blueprint, jsonify, abort
-from application.models import db, User
+from application.models import db, User, Member
 import datetime as dt
 import re
 
@@ -56,6 +56,12 @@ def create_user():
 
         db.session.add(tocreateuserobject)
         db.session.commit()
+
+        DoB=dt.datetime.now().year - dt.datetime.strptime(dob, '%Y-%m-%d').date().year
+        createMember = Member(firstname = firstname, lastname = lastname, DoB = DoB, gender=gender, user_id=int(tocreateuserobject.id))
+        db.session.add(createMember)
+        db.session.commit()
+
         return jsonify(dict(success=True, code=201))
 
     except Exception as e:
