@@ -1,5 +1,5 @@
 from flask import request, Blueprint, jsonify, abort
-from application.models import db, Planner, User
+from application.models import db, Planner, User, joinMemberPlannerActivity
 from application.extensions import jwt_auth
 import datetime as dt
 
@@ -14,6 +14,8 @@ def create_planner():
         description = request.json.get('description')
         jwttoken = request.headers.get('Authorization').split(' ')[1]
         user = jwt_auth.get_user_from_token(jwttoken)
+        friendlist = request.json.get('friendlist')
+        print(friendlist)
         if not planner_name:
             raise Exception('planner_name cannot be empty')
         if not first_date:
@@ -27,9 +29,16 @@ def create_planner():
         first_date=dt.datetime.strptime(first_date, '%Y-%m-%d').date(),
         last_date=dt.datetime.strptime(last_date, '%Y-%m-%d').date(),
         description=description, user_id=user.id)
-
         db.session.add(planner_object)
         db.session.commit()
+        
+        for i in friendlist:
+            if(i['selected']):
+                join = joinMemberPlannerActivity.Jointask(member_ID = i['id'], planner_ID = planner_object.id)
+                db.session.add(join)
+        
+        db.session.commit()
+        
         return jsonify(dict(success=True, code=201))
 
     except Exception as e:
