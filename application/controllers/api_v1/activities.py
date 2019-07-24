@@ -119,6 +119,45 @@ def view_all_activity(plannerid):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
 
+@bp.route('/plannerid=<plannerid>/view_location_in_specific_date', methods=['POST'])
+def view_location_in_date(plannerid):
+    try:
+        jwttoken = request.headers.get('Authorization').split(' ')[1]
+        user = jwt_auth.get_user_from_token(jwttoken)
+        desiredplanner = Planner.query.filter_by(id=plannerid).one()
+        request_date_string = request.json.get('request_date')
+        request_date_string_start = request_date_string+" 00:00"
+        request_date_string_stop = request_date_string+" 23:59"
+        request_date_start = dt.datetime.strptime(request_date_string_start, '%d/%m/%Y %H:%M')
+        request_date_stop = dt.datetime.strptime(request_date_string_stop, '%d/%m/%Y %H:%M')
+        if user.id != desiredplanner.user_id:
+            raise Exception('access denied')
+        listofactivity = Activity.query.filter(Activity.planner_ID==plannerid,
+        Activity.start>=request_date_start, Activity.start<=request_date_stop).order_by(Activity.start.asc()).all()
+        if not desiredplanner: raise Exception('no such planner')
+        if not listofactivity: raise Exception('no activity in planner')
+        if user.id == desiredplanner.user_id:
+            locationidlist = []
+            for x in listofactivity:
+                locationidlist.append(x.location_ID)
+            returnlocationdetailslist = []
+            returnlocationidlist = []
+            returnlocationnamelist = []
+            returnlocationlatlist = []
+            reutnrlocationlnglist = []
+            for x in locationidlist:
+                locationdetails = Location.query.filter(Location.id==x).one()
+                returnlocationdetailslist.append([locationdetails.id, locationdetails.name,
+                locationdetails.latitude, locationdetails.longtitude])
+            print(returnlocationdetailslist)
+            return jsonify(dict(locationdetailslist=returnlocationdetailslist,
+             code=200))
+        else:
+            raise Exception('no such user')
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(dict(success=False, message=str(e), code=400))
+
 @bp.route('/<planner_id>/view_activity/<activity_id>', methods=['GET'])
 def view_activity(planner_id, activity_id):
     try:
