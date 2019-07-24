@@ -49,15 +49,15 @@ def create_activity(plannerid):
             db.session.add(start_object)
             db.session.add(stop_object)
             db.session.commit()
-            activity_object_stop = Activity(name=activity_name,
-            start=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
+            activity_object_stop = Activity(name=activity_name+" (end)",
+            start=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
             end=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
             description=description, planner_ID=int(plannerid), serviceType_ID=int(atype),location_ID=stop_object.id)
             db.session.add(activity_object_stop)
             db.session.commit()
-            activity_object_start = Activity(name=activity_name,
+            activity_object_start = Activity(name=activity_name+" (start)",
             start=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
-            end=dt.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M'),
+            end=dt.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M'),
             description=description, planner_ID=int(plannerid), serviceType_ID=int(atype),location_ID=start_object.id\
                , ref=activity_object_stop.id )
             db.session.add(activity_object_start)
