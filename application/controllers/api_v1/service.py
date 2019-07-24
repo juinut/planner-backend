@@ -6,26 +6,27 @@ import datetime as dt
 bp = Blueprint('api_v1_service', __name__, url_prefix='/service')
 
 @bp.route('/<plannerid>/<activityid>/createservice', methods=['POST'])
-def create_service(activityid):
+def create_service(plannerid,activityid):
     try:
         name = request.json.get('name')
         activity_ID = activityid 
         calType = request.json.get('calType')#True is multiple, False is mod
+        price = request.json.get("price")
+        kid_price = request.json.get("kidPrice")
+        adute = request.json.get("adutePrice")
+        elderly = request.json.get("elderlyPrice")
 
         if not calType:
-            kid_price = request.json.get("kidPrice")
-            adute = request.json.get("adutPrice")
-            elderly = request.json.get("elderlyPrice")
             if not kid_price and not adute and not elderly:
                 raise Exception("Plase set price")
 
         else:
-            price = request.json.get("price")
             if not price:
                 raise Exception("Plase set price")
 
-        Obj = Service(name=name,kidPrice=kid_price,adutePrice=adute,elderlyProce=elderly\
+        Obj = Service(name=name,kidPrice=kid_price,adultPrice=adute,elderlyPrice=elderly\
             ,sumPrice=price,calType=calType,activity_ID=activity_ID)
+
         db.session.add(Obj)
         db.session.commit()
         serviceID = Obj.id
@@ -33,26 +34,39 @@ def create_service(activityid):
         members = request.json.get("user")
         # jwttoken = request.json.get('jwttoken')
         # user = jwt_auth.get_user_from_token(jwttoken)
-        if calType:
+        if not calType:
             for member in members:
-                mem = Member.query.filter_by(id = member.id).first()
-                memAge = (dt.date.now()).year - (mem.DoB).year
+                mem = Member.query.filter_by(id = member['id']).first()
+                memAge = int((dt.datetime.now()).year) - int(mem.DoB)
                 if memAge <= 12:
                     priceMember = kid_price
                 elif memAge < 60:
                     priceMember = adute
                 else:
                     priceMember = elderly
-                memTake = MemberTakeService(member_ID="member", service_ID=serviceID, price=priceMember)
+                memTake = MemberTakeService(member_ID=member['id'], service_ID=serviceID, price=priceMember)
                 db.session.add(memTake)
-                db.commit()
+                db.session.commit()
         else:
-            countMem = len(members)
-            priceM = price/countMem
+            countMem = int(len(members))
             for member in members:
-                memTake = MemberTakeService(member_ID="member", service_ID=serviceID, price=priceM)
-                db.session.add(memTake)
-                db.commit()
+                mem = Member.query.filter_by(id = member['id']).first()
+                memAge = int((dt.datetime.now()).year) - int(mem.DoB)
+                if memAge <= 12:
+                    countMem = countMem-1
+
+            priceM = int(price)/countMem
+            for member in members:
+                mem = Member.query.filter_by(id = member['id']).first()
+                memAge = int((dt.datetime.now()).year) - int(mem.DoB)
+                if memAge > 12:
+                    memTake = MemberTakeService(member_ID=member['id'], service_ID=serviceID, price=priceM)
+                    db.session.add(memTake)
+                    db.session.commit()
+                else:
+                    memTake = MemberTakeService(member_ID=member['id'], service_ID=serviceID)
+                    db.session.add(memTake)
+                    db.session.commit()
 
         return jsonify(dict(success=True,code=200))
 
