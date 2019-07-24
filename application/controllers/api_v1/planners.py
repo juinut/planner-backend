@@ -162,13 +162,13 @@ def getFriendinPlanner(planner_id):
     inplanner =  joinMemberPlannerActivity.Jointask.query.filter_by(planner_ID=planner_id)
     for i in inplanner:
         member = Member.query.filter_by(id=i.member_ID).one()
-        member_list.append(i.firstname)
-        memberid_list.append(i.id)
-        memberlastname_list.append(i.lastname)
-        membergender_list.append(i.gender)
+        member_list.append(member.firstname)
+        memberid_list.append(member.id)
+        memberlastname_list.append(member.lastname)
+        membergender_list.append(member.gender)
         age = dt.datetime.now().year - i.DoB
         memberage.append(age)
-        isownerlist.append(i.is_owner)
+        isownerlist.append(member.is_owner)
     return jsonify(dict(members=member_list,id=memberid_list,lastname=memberlastname_list,gender=membergender_list,age=memberage,owner=isownerlist, code=200))
 
 
