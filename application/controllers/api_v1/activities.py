@@ -149,7 +149,6 @@ def view_location_in_date(plannerid):
                 locationdetails = Location.query.filter(Location.id==x).one()
                 returnlocationdetailslist.append([locationdetails.id, locationdetails.name,
                 locationdetails.latitude, locationdetails.longtitude])
-            print(returnlocationdetailslist)
             return jsonify(dict(locationdetailslist=returnlocationdetailslist,
              code=200))
         else:
