@@ -1,5 +1,5 @@
 from flask import request, Blueprint, jsonify, abort
-from application.models import db, Planner, User, joinMemberPlannerActivity
+from application.models import db, Planner, User, joinMemberPlannerActivity, Member
 from application.extensions import jwt_auth
 import datetime as dt
 
@@ -150,3 +150,25 @@ def planner_belonging(planner_id):
     except Exception as e:
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e), code=400))
+
+@bp.route('/getMember/planner_id=<planner_id>', methods=['GET'])
+def getFriendinPlanner(planner_id):
+    member_list = []
+    memberid_list = []
+    memberlastname_list = []
+    membergender_list = []
+    memberage=[]
+    isownerlist=[]
+    inplanner =  joinMemberPlannerActivity.Jointask.query.filter_by(planner_ID=planner_id)
+    for i in inplanner:
+        member = Member.query.filter_by(id=i.member_ID).one()
+        member_list.append(member.firstname)
+        memberid_list.append(member.id)
+        memberlastname_list.append(member.lastname)
+        membergender_list.append(member.gender)
+        age = dt.datetime.now().year - member.DoB
+        memberage.append(age)
+        isownerlist.append(member.is_owner)
+    return jsonify(dict(members=member_list,id=memberid_list,lastname=memberlastname_list,gender=membergender_list,age=memberage,owner=isownerlist, code=200))
+
+

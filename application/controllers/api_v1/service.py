@@ -12,7 +12,7 @@ def create_service(activityid):
         activity_ID = activityid 
         calType = request.json.get('calType')#True is multiple, False is mod
 
-        if calType:
+        if not calType:
             kid_price = request.json.get("kidPrice")
             adute = request.json.get("adutPrice")
             elderly = request.json.get("elderlyPrice")
@@ -35,7 +35,7 @@ def create_service(activityid):
         # user = jwt_auth.get_user_from_token(jwttoken)
         if calType:
             for member in members:
-                mem = Member.query.filter_by(id == member).first()
+                mem = Member.query.filter_by(id = member.id).first()
                 memAge = (dt.date.now()).year - (mem.DoB).year
                 if memAge <= 12:
                     priceMember = kid_price
