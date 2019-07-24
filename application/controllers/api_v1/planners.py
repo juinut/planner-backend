@@ -166,7 +166,7 @@ def getFriendinPlanner(planner_id):
         memberid_list.append(member.id)
         memberlastname_list.append(member.lastname)
         membergender_list.append(member.gender)
-        age = dt.datetime.now().year - i.DoB
+        age = dt.datetime.now().year - member.DoB
         memberage.append(age)
         isownerlist.append(member.is_owner)
     return jsonify(dict(members=member_list,id=memberid_list,lastname=memberlastname_list,gender=membergender_list,age=memberage,owner=isownerlist, code=200))
