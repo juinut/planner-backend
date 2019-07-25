@@ -224,19 +224,21 @@ def viewResult(planner_id):
         for memberid in membersid:
             print('round: ' + str(i))
             print('member_id: '+str(memberid.member_ID))
-            memberdetail = Member.query.filter_by(id=int(memberid.member_ID)).one()    
-            memberdict[memberdetail.id] = [memberdetail.id, memberdetail.firstname, memberdetail.lastname, memberdetail.gender]
-            membertotalprice = 0
-            activitys = Activity.query.filter_by(planner_ID=planner_id)   
-            for activity in activitys:
-                services = Service.query.filter_by(activity_ID=activity.id)
-                servicesdict = {}
-                for service in services:          
-                    servicesdict[service.id] = [service.id, service.name]    
-                    price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid.member_ID,\
-                         MemberTakeService.service_ID == service.id).first()
-                    if price:
-                        membertotalprice = membertotalprice + int(price.price)
+            memberdetail = Member.query.filter_by(id=int(memberid.member_ID)).one()
+            if memberdetail:
+                memberdict[memberdetail.id] = [memberdetail.id, memberdetail.firstname, memberdetail.lastname, memberdetail.gender]
+                membertotalprice = 0
+                activitys = Activity.query.filter_by(planner_ID=planner_id)   
+                for activity in activitys:
+                    services = Service.query.filter_by(activity_ID=activity.id)
+                    servicesdict = {}
+                    for service in services:          
+                        servicesdict[service.id] = [service.id, service.name]    
+                        price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid.member_ID,\
+                            MemberTakeService.service_ID == service.id).first()
+                        if price:
+                            if price.price:
+                                membertotalprice = membertotalprice + int(price.price)
             
             print('get total price')
             print(membertotalprice)

@@ -5,7 +5,7 @@ from ._base import db
 
 class Planner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=True)
+    name = db.Column(db.String(255), nullable=False)
     first_date = db.Column(db.Date, nullable=False)
     last_date = db.Column(db.Date, nullable=False)
     description = db.Column(db.Text, nullable=True)
