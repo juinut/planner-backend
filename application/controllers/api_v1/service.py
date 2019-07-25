@@ -187,7 +187,7 @@ def viewMemberPrice(activity_id):
             priceinservice = 0
             for member in members:
                 memberdetail = Member.query.filter_by(id=member.member_ID)
-                memberdict[memberdetail.id] = [memberdetail.id, memberdetail.fristname, memberdetail.lastname, memberdetail.DoB, member.price]
+                memberdict[memberdetail.id] = [memberdetail.id, memberdetail.firstname, memberdetail.lastname, memberdetail.DoB, member.price]
                 priceinservice += member.price
             servicedict[service.id].append(memberdict)
             servicedict[service.id].append(priceinservice)
@@ -217,22 +217,33 @@ def viewResult(planner_id):
     try:
         planner = Planner.query.filter_by(id=planner_id)
         memberdict = {}
+        print('get planner id')
         membersid = joinMemberPlannerActivity.Jointask.query.filter_by(planner_ID=planner_id)
+        print(membersid)
+        i = 0
         for memberid in membersid:
-            memberdetail = Member.query.filter_by(id=memberid)
-            memberdict[memberdetail.id] = [memberdetail.id, memberdetail.fristname, memberdetail.lastname, memberdetail.gender]
+            print('round: ' + str(i))
+            print('member_id: '+str(memberid.member_ID))
+            memberdetail = Member.query.filter_by(id=int(memberid.member_ID)).one()    
+            memberdict[memberdetail.id] = [memberdetail.id, memberdetail.firstname, memberdetail.lastname, memberdetail.gender]
             membertotalprice = 0
-            activitys = Activity.query.filter_by(planner_ID=planner_id)
+            activitys = Activity.query.filter_by(planner_ID=planner_id)   
             for activity in activitys:
                 services = Service.query.filter_by(activity_ID=activity.id)
                 servicesdict = {}
-                for service in services:
-                    servicesdict[service.id] = [service.id, service.name]
-                    price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid,\
-                         MemberTakeService.service_ID == service.id)
-                    membertotalprice = membertotalprice + int(price.price)
-            memberdict[memberdetail.id].append(membertotalprice, servicesdict)
-        
+                for service in services:          
+                    servicesdict[service.id] = [service.id, service.name]    
+                    price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid.member_ID,\
+                         MemberTakeService.service_ID == service.id).first()
+                    if price:
+                        membertotalprice = membertotalprice + int(price.price)
+            
+            print('get total price')
+            print(membertotalprice)
+            memberdict[memberdetail.id].append(membertotalprice)
+            memberdict[memberdetail.id].append(servicesdict)
+            print('finish append')
+            i = i+1
         return jsonify(dict(data=memberdict, success=True, code=200))
         
     except Exception as e:
