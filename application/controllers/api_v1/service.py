@@ -180,17 +180,22 @@ def viewMemberPrice(activity_id):
     try:
         services = Service.query.filter_by(activity_ID = activity_id)
         servicedict = {}
+        activity_total_price = 0
         for service in services:
             servicedict[service.id] = [service.id, service.name]
             memberdict = {}
             members = MemberTakeService.query.filter_by(service_ID = service.id)
             priceinservice = 0
             for member in members:
-                memberdetail = Member.query.filter_by(id=member.member_ID)
+                memberdetail = Member.query.filter_by(id=member.member_ID).one()
                 memberdict[memberdetail.id] = [memberdetail.id, memberdetail.firstname, memberdetail.lastname, memberdetail.DoB, member.price]
-                priceinservice += member.price
+                if member.price:
+                    priceinservice += member.price
+                    activity_total_price += member.price
             servicedict[service.id].append(memberdict)
             servicedict[service.id].append(priceinservice)
+        
+        servicedict[999999] = int(activity_total_price)
         return jsonify(dict(data=servicedict, success=True, code=200))
         
     except Exception as e:
