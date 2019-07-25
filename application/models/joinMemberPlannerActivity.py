@@ -14,4 +14,4 @@ class Jointask(db.Model):
     db.relationship('Planner', uselist=False, backref='tasks', lazy='dynamic')
 
     def __repr__(self):
-        return '<JoinTask %s %s %s>' % self.member_ID, self.planner_ID, self_activity_ID
+        return '<JoinTask %s %s %s>' % self.member_ID, self.planner_ID, self.activity_ID

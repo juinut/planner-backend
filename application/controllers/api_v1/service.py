@@ -1,5 +1,5 @@
 from flask import request, Blueprint, jsonify, abort
-from application.models import db, Planner, User, Activity, MemberTakeService, Service, Location, Servicetype, Member
+from application.models import db, Planner, User, Activity, MemberTakeService, Service, Location, Servicetype, Member, joinMemberPlannerActivity
 from application.extensions import jwt_auth
 import datetime as dt
 
@@ -175,11 +175,10 @@ def viewServiceInActivity(activity_id):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e),code=400))
 
-@bp.route('<activity_id>/member',methods=['GET'])
+@bp.route('<activity_id>/service',methods=['GET'])
 def viewMemberPrice(activity_id):
     try:
         services = Service.query.filter_by(activity_ID = activity_id)
-
         servicedict = {}
         for service in services:
             servicedict[service.id] = [service.id, service.name]
@@ -192,13 +191,11 @@ def viewMemberPrice(activity_id):
                 priceinservice += member.price
             servicedict[service.id].append(memberdict)
             servicedict[service.id].append(priceinservice)
-
-
         return jsonify(dict(data=servicedict, success=True, code=200))
         
     except Exception as e:
-        return jsonify(dict(success=False, message=str(e),code=400))
-        
+        return jsonify(dict(success=False, message=str(e), code=400))
+
         # service = Service.query.filter_by(id = service_ID)
         # if not service:
         #     raise 'service not found'
@@ -215,4 +212,48 @@ def viewMemberPrice(activity_id):
         
         
 
-    
+@bp.route('planner_id=<planner_id>/member',methods=['GET'])
+def viewResult(planner_id):
+    try:
+        planner = Planner.query.filter_by(id=planner_id)
+        memberdict = {}
+        membersid = joinMemberPlannerActivity.Jointask.query.filter_by(planner_ID=planner_id)
+        for memberid in membersid:
+            memberdetail = Member.query.filter_by(id=memberid)
+            memberdict[memberdetail.id] = [memberdetail.id, memberdetail.fristname, memberdetail.lastname, memberdetail.gender]
+            membertotalprice = 0
+            activitys = Activity.query.filter_by(planner_ID=planner_id)
+            for activity in activitys:
+                services = Service.query.filter_by(activity_ID=activity.id)
+                servicesdict = {}
+                for service in services:
+                    servicesdict[service.id] = [service.id, service.name]
+                    price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid,\
+                         MemberTakeService.service_ID == service.id)
+                    membertotalprice = membertotalprice + int(price.price)
+            memberdict[memberdetail.id].append(membertotalprice, servicesdict)
+        
+         return jsonify(dict(data=memberdict, success=True, code=200))
+        
+    except Exception as e:
+        return jsonify(dict(success=False, message=str(e), code=400))
+
+
+
+
+
+
+
+
+
+            # members = MemberTakeService.query.filter_by(service_ID = service.id)
+            # priceinservice = 0
+            # for member in members:
+            #     memberdetail = Member.query.filter_by(id=member.member_ID)
+            #     memberdict[memberdetail.id] = [memberdetail.id, memberdetail.fristname, memberdetail.lastname, memberdetail.DoB, member.price]
+            #     priceinservice += member.price
+            # servicedict[service.id].append(memberdict)
+            # servicedict[service.id].append(priceinservice)
+
+
+       
