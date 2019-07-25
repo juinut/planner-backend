@@ -175,25 +175,44 @@ def viewServiceInActivity(activity_id):
         db.session.rollback()
         return jsonify(dict(success=False, message=str(e),code=400))
 
-@bp.route('<activity_id>/<service_ID>/member',methods=['GET'])
-def viewMemberPrice(service_ID):
+@bp.route('<activity_id>/member',methods=['GET'])
+def viewMemberPrice(activity_id):
     try:
-        service = Service.query.filter_by(id = service_ID)
-        if not service:
-            raise 'service not found'
+        services = Service.query.filter_by(activity_ID = activity_id)
+
+        servicedict = {}
+        for service in services:
+            servicedict[service.id] = [service.id, service.name]
+            memberdict = {}
+            members = MemberTakeService.query.filter_by(service_ID = service.id)
+            priceinservice = 0
+            for member in members:
+                memberdetail = Member.query.filter_by(id=member.member_ID)
+                memberdict[memberdetail.id] = [memberdetail.id, memberdetail.fristname, memberdetail.lastname, memberdetail.DoB, member.price]
+                priceinservice += member.price
+            servicedict[service.id].append(memberdict)
+            servicedict[service.id].append(priceinservice)
+
+
+        return jsonify(dict(data=servicedict, success=True, code=200))
         
-        members = service.takeServices
-        memberlist = []
-        membergender = []
-        memberpricelist = []
-        for member in members:
-            membername = Member.query.filter_by(id = member.member_ID).one()
-            memberlist.append(membername.fristname)
-            membergender.append(membername.gender)
-            memberpricelist.append(member.price)
-        
-        return jsonify(dict(name=memberlist, gender=membergender,\
-            price=memberpricelist))
     except Exception as e:
         return jsonify(dict(success=False, message=str(e),code=400))
+        
+        # service = Service.query.filter_by(id = service_ID)
+        # if not service:
+        #     raise 'service not found'
+        
+        # members = service.takeServices
+        # memberlist = []
+        # membergender = []
+        # memberpricelist = []
+        # for member in members:
+        #     membername = Member.query.filter_by(id = member.member_ID).one()
+        #     memberlist.append(membername.fristname)
+        #     membergender.append(membername.gender)
+        #     memberpricelist.append(member.price)
+        
+        
+
     
