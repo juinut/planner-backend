@@ -233,7 +233,7 @@ def viewResult(planner_id):
                     membertotalprice = membertotalprice + int(price.price)
             memberdict[memberdetail.id].append(membertotalprice, servicesdict)
         
-         return jsonify(dict(data=memberdict, success=True, code=200))
+        return jsonify(dict(data=memberdict, success=True, code=200))
         
     except Exception as e:
         return jsonify(dict(success=False, message=str(e), code=400))
