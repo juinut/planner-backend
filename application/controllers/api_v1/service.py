@@ -220,8 +220,13 @@ def viewMemberPrice(activity_id):
 @bp.route('planner_id=<planner_id>/member',methods=['GET'])
 def viewResult(planner_id):
     try:
-        planner = Planner.query.filter_by(id=planner_id)
+        planner = Planner.query.filter_by(id=planner_id).one()
         memberdict = {}
+        memberdict[-1] = {
+            'id' : planner.id,
+            'planner_name' : planner.name,
+            'desc' : planner.description
+        }
         print('get planner id')
         membersid = joinMemberPlannerActivity.Jointask.query.filter_by(planner_ID=planner_id)
         print(membersid)
@@ -231,7 +236,7 @@ def viewResult(planner_id):
             print('member_id: '+str(memberid.member_ID))
             memberdetail = Member.query.filter_by(id=int(memberid.member_ID)).one()
             if memberdetail:
-                memberdict[memberdetail.id] = [memberdetail.id, memberdetail.firstname, memberdetail.lastname, memberdetail.gender]
+                memberdict[memberdetail.id] = [memberdetail.id, memberdetail.firstname, memberdetail.lastname, memberdetail.gender, memberdetail.is_owner]
                 membertotalprice = 0
                 activitys = Activity.query.filter_by(planner_ID=planner_id)   
                 for activity in activitys:
