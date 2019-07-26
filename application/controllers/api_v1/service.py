@@ -178,9 +178,11 @@ def viewServiceInActivity(activity_id):
 @bp.route('<activity_id>/service',methods=['GET'])
 def viewMemberPrice(activity_id):
     try:
+        activity = Activity.query.filter_by(id = activity_id).one()
         services = Service.query.filter_by(activity_ID = activity_id)
         servicedict = {}
         activity_total_price = 0
+        activityname = activity.name
         for service in services:
             servicedict[service.id] = [service.id, service.name]
             memberdict = {}
@@ -196,7 +198,7 @@ def viewMemberPrice(activity_id):
             servicedict[service.id].append(priceinservice)
 
         servicedict[999999] = int(activity_total_price)
-        return jsonify(dict(data=servicedict, success=True, code=200))
+        return jsonify(dict(data=servicedict, activityname = activityname, success=True, code=200))
 
     except Exception as e:
         return jsonify(dict(success=False, message=str(e), code=400))
@@ -243,7 +245,7 @@ def viewResult(planner_id):
                 activitys = Activity.query.filter_by(planner_ID=planner_id)
                 for activity in activitys:
                     services = Service.query.filter_by(activity_ID=activity.id)
-                    if services
+                    if services:
                         for service in services:
                             servicesdict[service.id] = [service.id, service.name]
                             price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid.member_ID,\
