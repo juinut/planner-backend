@@ -243,7 +243,7 @@ def viewResult(planner_id):
                 activitys = Activity.query.filter_by(planner_ID=planner_id)
                 for activity in activitys:
                     services = Service.query.filter_by(activity_ID=activity.id)
-                    if services
+                    if services:
                         for service in services:
                             servicesdict[service.id] = [service.id, service.name]
                             price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid.member_ID,\
