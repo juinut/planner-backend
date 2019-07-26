@@ -9,7 +9,7 @@ bp = Blueprint('api_v1_service', __name__, url_prefix='/service')
 def create_service(plannerid,activityid):
     try:
         name = request.json.get('name')
-        activity_ID = activityid 
+        activity_ID = activityid
         calType = request.json.get('calType')#True is multiple, False is mod
         price = request.json.get("price")
         kid_price = request.json.get("kidPrice")
@@ -102,7 +102,7 @@ def update_service(service_id):
             price = request.json.get("price")
             if not price:
                 raise Exception("Plase set price")
-        
+
         Service.query.filter_by(id=service_id)\
         .update({Service.name:name, Service.kidPrice:kid_price, Service.adultPrice:adult,\
         Service.elderlyPrice:elderly,Service.calType:calType,Service.sumPrice:price})
@@ -164,12 +164,12 @@ def viewServiceInActivity(activity_id):
             for price in service.takeServices:
                 allprice += price.price
             serviceallpricelist.append(allprice)
-        
+
         return jsonify(dict(servicename=servicenamelist, caltype=servicecaltypelist\
             , kid=servicekidlist, adult=serviceadultlist, elderly=serviceelderylist\
             , sumprice=servicesumpricelist, allprice=servicesumpricelist\
             , code = 200))
-        
+
 
     except Exception as e:
         db.session.rollback()
@@ -194,17 +194,17 @@ def viewMemberPrice(activity_id):
                     activity_total_price += member.price
             servicedict[service.id].append(memberdict)
             servicedict[service.id].append(priceinservice)
-        
+
         servicedict[999999] = int(activity_total_price)
         return jsonify(dict(data=servicedict, success=True, code=200))
-        
+
     except Exception as e:
         return jsonify(dict(success=False, message=str(e), code=400))
 
         # service = Service.query.filter_by(id = service_ID)
         # if not service:
         #     raise 'service not found'
-        
+
         # members = service.takeServices
         # memberlist = []
         # membergender = []
@@ -214,15 +214,15 @@ def viewMemberPrice(activity_id):
         #     memberlist.append(membername.fristname)
         #     membergender.append(membername.gender)
         #     memberpricelist.append(member.price)
-        
-        
+
+
 
 @bp.route('planner_id=<planner_id>/member',methods=['GET'])
 def viewResult(planner_id):
     try:
         planner = Planner.query.filter_by(id=planner_id).one()
         memberdict = {}
-        memberdict[-1] = {
+        memberdict[0] = {
             'id' : planner.id,
             'planner_name' : planner.name,
             'desc' : planner.description
@@ -238,18 +238,18 @@ def viewResult(planner_id):
             if memberdetail:
                 memberdict[memberdetail.id] = [memberdetail.id, memberdetail.firstname, memberdetail.lastname, memberdetail.gender, memberdetail.is_owner]
                 membertotalprice = 0
-                activitys = Activity.query.filter_by(planner_ID=planner_id)   
+                activitys = Activity.query.filter_by(planner_ID=planner_id)
                 for activity in activitys:
                     services = Service.query.filter_by(activity_ID=activity.id)
                     servicesdict = {}
-                    for service in services:          
-                        servicesdict[service.id] = [service.id, service.name]    
+                    for service in services:
+                        servicesdict[service.id] = [service.id, service.name]
                         price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid.member_ID,\
                             MemberTakeService.service_ID == service.id).first()
                         if price:
                             if price.price:
                                 membertotalprice = membertotalprice + int(price.price)
-            
+
             print('get total price')
             print(membertotalprice)
             memberdict[memberdetail.id].append(membertotalprice)
@@ -257,7 +257,7 @@ def viewResult(planner_id):
             print('finish append')
             i = i+1
         return jsonify(dict(data=memberdict, success=True, code=200))
-        
+
     except Exception as e:
         return jsonify(dict(success=False, message=str(e), code=400))
 
@@ -277,6 +277,3 @@ def viewResult(planner_id):
             #     priceinservice += member.price
             # servicedict[service.id].append(memberdict)
             # servicedict[service.id].append(priceinservice)
-
-
-       
