@@ -222,6 +222,7 @@ def viewResult(planner_id):
     try:
         planner = Planner.query.filter_by(id=planner_id).one()
         memberdict = {}
+        servicesdict = {}
         memberdict[0] = {
             'id' : planner.id,
             'planner_name' : planner.name,
@@ -231,6 +232,7 @@ def viewResult(planner_id):
         membersid = joinMemberPlannerActivity.Jointask.query.filter_by(planner_ID=planner_id)
         print(membersid)
         i = 0
+        allprice = 0
         for memberid in membersid:
             print('round: ' + str(i))
             print('member_id: '+str(memberid.member_ID))
@@ -241,14 +243,15 @@ def viewResult(planner_id):
                 activitys = Activity.query.filter_by(planner_ID=planner_id)
                 for activity in activitys:
                     services = Service.query.filter_by(activity_ID=activity.id)
-                    servicesdict = {}
-                    for service in services:
-                        servicesdict[service.id] = [service.id, service.name]
-                        price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid.member_ID,\
-                            MemberTakeService.service_ID == service.id).first()
-                        if price:
-                            if price.price:
-                                membertotalprice = membertotalprice + int(price.price)
+                    if services
+                        for service in services:
+                            servicesdict[service.id] = [service.id, service.name]
+                            price = MemberTakeService.query.filter(MemberTakeService.member_ID == memberid.member_ID,\
+                                MemberTakeService.service_ID == service.id).first()
+                            if price:
+                                if price.price:
+                                    membertotalprice = membertotalprice + int(price.price)
+                                    allprice += int(price.price)
 
             print('get total price')
             print(membertotalprice)
@@ -256,6 +259,7 @@ def viewResult(planner_id):
             memberdict[memberdetail.id].append(servicesdict)
             print('finish append')
             i = i+1
+        memberdict[0]['allprice'] = allprice
         return jsonify(dict(data=memberdict, success=True, code=200))
 
     except Exception as e:
